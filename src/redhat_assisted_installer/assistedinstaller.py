@@ -88,12 +88,12 @@ class assistedinstaller:
             logging.errorMessage(f"getInfrastructureEnvironments() method errored on request.get() with the following error: {e}")
 
 
-    def postInfrastructureEnvironment(self, name, version=None):
+    def postInfrastructureEnvironment(self, name, cpuarchitecture="x86_64", version=None, clusterid=None):
         url = self.apiBase + "infra-envs"
 
         headers = self.__getHeaders()
 
-        infraparams = createParams.infraEnvCreateParams(name, self.pullSecret, version=version)
+        infraparams = createParams.infraEnvCreateParams(name, self.pullSecret, cpuarchitecture=cpuarchitecture, version=version, clusterid=clusterid)
 
         data = infraparams.getParams()
 
