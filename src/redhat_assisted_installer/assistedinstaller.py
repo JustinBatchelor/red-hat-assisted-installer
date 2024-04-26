@@ -163,12 +163,12 @@ class assistedinstaller:
         except Exception as e:
             logging.errorMessage(f"getClusters() method errored on request.get() with the following error: {e}")
 
-    def postCluster(self, name, version, hamode="None", cpuarchitecture='x86_64'):
+    def postCluster(self, name, version, basedomain, hamode="None", cpuarchitecture='x86_64'):
         url = self.apiBase + "clusters"
 
         headers = self.__getHeaders()
 
-        clusterparamas = createParams.clusterCreateParams(name, self.pullSecret, version=version, hamode=hamode, cpuarchitecture=cpuarchitecture)
+        clusterparamas = createParams.clusterCreateParams(name, self.pullSecret, version=version, basedomain=basedomain, hamode=hamode, cpuarchitecture=cpuarchitecture)
 
         data = clusterparamas.getParams()
 
