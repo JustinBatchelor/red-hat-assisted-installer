@@ -19,7 +19,7 @@ class infraEnvCreateParams:
 class clusterCreateParams:
     def __init__(self, name, pullsecret, version, basedomain, hamode="None", cpuarchitecture='x86_64'):
         self.params = {}
-        self.params['name'] = name + "infra-env"
+        self.params['name'] = name
         self.params['pull_secret'] = pullsecret
         self.params['openshift_version'] = version
         self.params['high_availability_mode'] = hamode
