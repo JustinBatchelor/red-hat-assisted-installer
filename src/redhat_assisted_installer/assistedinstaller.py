@@ -1,5 +1,5 @@
 ## Code to disable creating pycache dir after running
-import sys, requests, json, os, jmespath, time
+import sys, requests, json, os
 sys.dont_write_bytecode = True
 ###################################################
 
