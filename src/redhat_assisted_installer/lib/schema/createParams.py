@@ -3,7 +3,7 @@
 class infraEnvCreateParams:
     def __init__(self, name, pullsecret, cpuarchitecture="x86_64", version=None, clusterid=None):
         self.params = {}
-        self.params['name'] = name + "infra-env"
+        self.params['name'] = name + "-infra-env"
         self.params['pull_secret'] = pullsecret
         self.params['cpu_architecture'] = cpuarchitecture
         if version is not None:
