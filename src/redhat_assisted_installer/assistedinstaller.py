@@ -8,9 +8,6 @@ from urllib.parse import urlencode
 from .lib.schema import createParams
 from .lib import logging
 
-# from src.redhat_assisted_installer.lib.schema import createParams
-# from src.redhat_assisted_installer.lib import logging
-
 
 class assistedinstaller:
     def __init__(self):
@@ -132,3 +129,99 @@ class assistedinstaller:
 
         except Exception as e:
             logging.errorMessage(f"deleteInfrastructureEnvironments() method errored on request.delete() with the following error: {e}")
+
+
+    def getClusters(self, cluster_id=None, with_hosts=False, owner=None):
+        url = self.apiBase + "clusters"
+        if cluster_id is not None:
+            if '?' not in url:
+                url += '?'
+            url += f'cluster_id={cluster_id}'
+
+        if with_hosts:
+            if '?' not in url:
+                url += '?'
+            url += f'with_hosts={with_hosts}'            
+
+        if owner is not None:
+            if '?' not in url:
+                url += '?'
+            url += f'owner={owner}'
+        headers = self.__getHeaders()
+        
+        try:
+            response = requests.get(url, headers=headers)
+
+            if response.status_code == 200:
+                logging.logMessage("Returned Clusters")
+                logging.prettyPrint(json.loads(response.text))
+                return json.loads(response.text)
+            else: 
+                logging.errorMessage(f"getClusters() method did not recieve a 200 status code, recieved {response.status_code} instead")
+                logging.errorMessage(f"{response.text}")  
+                return False     
+        except Exception as e:
+            logging.errorMessage(f"getClusters() method errored on request.get() with the following error: {e}")
+
+    def postCluster(self, name, version, hamode="None", cpuarchitecture='x86_64'):
+        url = self.apiBase + "clusters"
+
+        headers = self.__getHeaders()
+
+        clusterparamas = createParams.clusterCreateParams(name, self.pullSecret, version=version, hamode=hamode, cpuarchitecture=cpuarchitecture)
+
+        data = clusterparamas.getParams()
+
+        try:
+            response = requests.post(url, headers=headers, json=data)
+
+            if response.status_code == 201:
+                logging.logMessage(f"Successfully created Cluster:")
+                logging.prettyPrint(json.loads(response.text))
+                return json.loads(response.text)
+            else:
+                logging.errorMessage(f"postCluster() method did not recieve a 201 status code, recieved {response.status_code} instead")
+                logging.errorMessage(f"{response.text}")
+                return False
+
+        except Exception as e:
+            logging.quitMessage(f"postCluster() method errored on request.post() with the following error: {e}")
+
+
+    def deleteCluster(self, id):
+        url = self.apiBase + f"clusters/{id}"
+
+        headers = self.__getHeaders()
+
+        try:
+            response = requests.delete(url, headers=headers)
+
+            if response.status_code == 204:
+                logging.logMessage(f"Successfully deleted Cluster: {id}")
+                return True
+            else:
+                logging.errorMessage(f"deleteCluster() method did not recieve a 204 status code, recieved {response.status_code} instead")
+                return False 
+
+        except Exception as e:
+            logging.errorMessage(f"deleteCluster() method errored on request.delete() with the following error: {e}")
+
+    def installCluster(self, id):
+        url = self.apiBase + f"clusters/{id}/actions/install"
+
+        headers = self.__getHeaders()
+
+        try:
+            response = requests.post(url, headers=headers)
+
+            if response.status_code == 202:
+                logging.logMessage(f"Successfully initiated cluster installation for cluster: {id}")
+                logging.prettyPrint(json.loads(response.text))
+                return json.loads(response.text)
+            else:
+                logging.errorMessage(f"installCluster() method did not recieve a 202 status code, recieved {response.status_code} instead")
+                return False 
+
+        except Exception as e:
+            logging.errorMessage(f"installCluster() method errored on request.post() with the following error: {e}")
+

@@ -22,8 +22,9 @@ class clusterCreateParams:
         self.params['name'] = name + "infra-env"
         self.params['pull_secret'] = pullsecret
         self.params['openshift_version'] = version
-        self.params['high_availablity_mode'] = hamode
+        self.params['high_availability_mode'] = hamode
         self.params['cpu_architecture'] = cpuarchitecture
 
     def getParams(self):
+    
         return self.params

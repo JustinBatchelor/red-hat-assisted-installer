@@ -3,13 +3,10 @@ import sys, os
 sys.dont_write_bytecode = True
 ###################################################
 
-sys.path.append(os.path.abspath(f"{os.getcwd()}/src/redhat_assisted_installer/"))
+sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
 import redhat_assisted_installer.assistedinstaller as assistedinstaller
 
 installer = assistedinstaller.assistedinstaller()
 
-infras = installer.getInfrastructureEnvironments()
-
-for infra in infras:
-    installer.deleteInfrastructureEnvironment(infra['id'])
+cluster = installer.postCluster(f"ocp-testing", "4.15")
