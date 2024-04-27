@@ -23,7 +23,7 @@ Python package that implements the [RedHat Assisted Installer API](https://devel
 
 **_You can find these credentials by navigating to https://console.redhat.com/openshift/overview. In the side panel navigate to `Downloads`, and at the bottom of the page you should see the pull secret and token_**
 
-![alt text](./docs/downloads_console.png)
+![alt text](downloads_console.png)
 
 
 ## How to use
