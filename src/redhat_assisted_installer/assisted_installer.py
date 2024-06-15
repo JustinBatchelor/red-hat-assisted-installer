@@ -7,7 +7,6 @@ from urllib.parse import urlencode
 
 from .lib.schemas import *
 
-
 class assisted_installer:
     def __init__(self) -> None:
         self.apiBase = "https://api.openshift.com/api/assisted-install/v2/"
@@ -54,17 +53,17 @@ class assisted_installer:
             print(e)
 
 
-    def get_cluster(self, id):
-        url = self.apiBase + f"clusters/{id}"
+    # def get_cluster(self, id):
+    #     url = self.apiBase + f"clusters/{id}"
         
-        try:
-            response = requests.get(url, headers=self.__get_headers())
-            print(response.json())
-            return response.json()
+    #     try:
+    #         response = requests.get(url, headers=self.__get_headers())
+    #         print(response.json())
+    #         return response.json()
         
-        except Exception as e:
-            print("Exception found in get_cluster()")
-            print(e)
+    #     except Exception as e:
+    #         print("Exception found in get_cluster()")
+    #         print(e)
 
     def get_default_config(self):
         url = self.apiBase + f"clusters/default-config"
@@ -75,20 +74,27 @@ class assisted_installer:
             return response.json()
         
         except Exception as e:
-            print("Exception found in get_cluster()")
+            print("Exception found in get_default_config()")
             print(e)
 
-    def get_clusters(self, with_hosts=False, owner=None):
+    def get_clusters(self, cluster_id: Optional[str]=None, with_hosts: Optional[bool]=False, owner: Optional[str]=None):
         url = self.apiBase + "clusters"
+        if cluster_id is not None:
+            if '?' not in url:
+                url += '?'
+            url += f'openshift_cluster_id={cluster_id}&'
+        
         if with_hosts:
             if '?' not in url:
                 url += '?'
-            url += f'with_hosts={with_hosts}'            
+            url += f'with_hosts={with_hosts}&'            
 
         if owner is not None:
             if '?' not in url:
                 url += '?'
-            url += f'owner={owner}'
+            url += f'owner={owner}&'
+
+        print(url)
         
         try:
             response = requests.get(url, headers=self.__get_headers())
