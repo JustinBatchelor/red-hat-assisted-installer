@@ -3,12 +3,9 @@ import sys, os
 sys.dont_write_bytecode = True
 
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
+import redhat_assisted_installer.assisted_installer as assisted_installer
 
-import redhat_assisted_installer.assistedinstaller as assistedinstaller
 
-installer = assistedinstaller.assistedinstaller()
+installer = assisted_installer.assisted_installer()
 
-clusters = installer.getClusters()
-
-for cluster in clusters:
-    installer.getClusters( with_hosts=True, owner="tessa")
+clusters = installer.get_clusters()

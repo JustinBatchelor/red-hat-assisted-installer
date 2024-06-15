@@ -4,8 +4,8 @@ sys.dont_write_bytecode = True
 
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
-import redhat_assisted_installer.assistedinstaller as assistedinstaller
+import redhat_assisted_installer.assisted_installer as assisted_installer
 
-installer = assistedinstaller.assistedinstaller()
+installer = assisted_installer.assisted_installer()
 
-print(installer.getInfrastructureEnvironments())
+installer.get_infrastructure_environements()
