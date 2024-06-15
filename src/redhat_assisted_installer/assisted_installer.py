@@ -226,8 +226,8 @@ class assisted_installer:
             print(e)
 
 
-    def get_infrastructure_environement(self, id):
-        url = self.apiBase + f"infra-envs/{id}"
+    def get_infrastructure_environement(self, infra_env_id):
+        url = self.apiBase + f"infra-envs/{infra_env_id}"
 
         try:
             response = requests.get(url, headers=self.__get_headers())
@@ -239,15 +239,8 @@ class assisted_installer:
             print(e)   
 
     # Method that will implement the /v2/infra-envs GET assisted installer endpoint
-    def get_infrastructure_environements(self, cluster_id=None, owner=None):
+    def get_infrastructure_environements(self):
         url = self.apiBase + "infra-envs"
-        if cluster_id is not None and owner is not None:
-            url += f'?cluster_id={cluster_id}&owner={owner}'
-        else:
-            if cluster_id is not None:
-                url += f'?cluster_id={cluster_id}'
-            if owner is not None:
-                url += f'?owner={owner}'
         
         try:
             response = requests.get(url, headers=self.__get_headers())
