@@ -57,10 +57,6 @@ class assisted_installer:
     def get_cluster(self, id):
         url = self.apiBase + f"clusters/{id}"
         
-        if '?' not in url:
-            url += '?'
-        url += f'cluster_id={id}'
-        
         try:
             response = requests.get(url, headers=self.__get_headers())
             print(response.json())
