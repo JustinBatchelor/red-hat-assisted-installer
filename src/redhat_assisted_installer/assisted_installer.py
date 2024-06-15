@@ -53,17 +53,17 @@ class assisted_installer:
             print(e)
 
 
-    # def get_cluster(self, id):
-    #     url = self.apiBase + f"clusters/{id}"
+    def get_cluster(self, cluster_id: Optional[str]=None):
+        url = self.apiBase + f"clusters/{cluster_id}"
+
+        try:
+            response = requests.get(url, headers=self.__get_headers())
+            print([response.json()])
+            return [response.json()]
         
-    #     try:
-    #         response = requests.get(url, headers=self.__get_headers())
-    #         print(response.json())
-    #         return response.json()
-        
-    #     except Exception as e:
-    #         print("Exception found in get_cluster()")
-    #         print(e)
+        except Exception as e:
+            print("Exception found in get_cluster()")
+            print(e)
 
     def get_default_config(self):
         url = self.apiBase + f"clusters/default-config"
@@ -77,12 +77,9 @@ class assisted_installer:
             print("Exception found in get_default_config()")
             print(e)
 
-    def get_clusters(self, cluster_id: Optional[str]=None, with_hosts: Optional[bool]=False, owner: Optional[str]=None):
+    def get_clusters(self,  with_hosts: Optional[bool]=False, owner: Optional[str]=None):
         url = self.apiBase + "clusters"
-        if cluster_id is not None:
-            if '?' not in url:
-                url += '?'
-            url += f'openshift_cluster_id={cluster_id}&'
+
         
         if with_hosts:
             if '?' not in url:
@@ -93,8 +90,6 @@ class assisted_installer:
             if '?' not in url:
                 url += '?'
             url += f'owner={owner}&'
-
-        print(url)
         
         try:
             response = requests.get(url, headers=self.__get_headers())
@@ -151,8 +146,8 @@ class assisted_installer:
                 print("Successfully created cluster:")
             else: 
                 print(f"Failed to create cluster")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in post_cluster()")
@@ -205,8 +200,8 @@ class assisted_installer:
                 
             else:
                 print(f"Failed to patch cluster: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in patch_cluster()")
@@ -236,8 +231,8 @@ class assisted_installer:
 
         try:
             response = requests.get(url, headers=self.__get_headers())
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
             
         except Exception as e:
             print("Exception found in get_infrastructure_environment()")
@@ -288,8 +283,8 @@ class assisted_installer:
                 print(f"Successfully patched infra-env: {id}")
             else:
                 print(f"Failed to patch infra-env: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in patch_infrastructure_environment()")
@@ -324,8 +319,8 @@ class assisted_installer:
                 print("Successfully created infra-env:")
             else: 
                 print(f"Failed to create infra-env")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
 
         except Exception as e:
@@ -360,8 +355,8 @@ class assisted_installer:
                 print(f"Successfully initiated action 'allow-add-hosts' for cluster: {id}")
             else:
                 print(f"Failed to initiate action 'allow-add-hosts' for cluster: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in allow_add_hosts()")
@@ -378,8 +373,8 @@ class assisted_installer:
                 print(f"Successfully initiated action 'allow-add-workers' for cluster: {id}")
             else:
                 print(f"Failed to initiate action 'allow-add-workers' for cluster: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in cluster_action_allow_add_workers()")
@@ -395,8 +390,8 @@ class assisted_installer:
                 print(f"Successfully canceled installation for cluster: {id}")
             else:
                 print(f"Failed to cancel installation for cluster: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in cluster_action_cancel()")
@@ -412,8 +407,8 @@ class assisted_installer:
                 print(f"Successfully complete installation for cluster: {id}")
             else:
                 print(f"Failed to complete installation for cluster: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in cluster_action_complete_installation()")
@@ -430,8 +425,8 @@ class assisted_installer:
                 print(f"Successfully reset cluster: {id}")
             else:
                 print(f"Failed to reset cluster: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in cluster_action_reset()")
@@ -448,8 +443,8 @@ class assisted_installer:
                 print(f"Successfully initiated cluster install for cluster: {id}")
             else:
                 print(f"Failed to initiate cluster install for cluster: {id}")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in cluster_action_install()")
@@ -468,8 +463,8 @@ class assisted_installer:
                 return response.text
             else:
                 response = requests.get(url, headers=self.__get_headers())
-                print(response.json())
-                return response.json()
+                print([response.json()])
+                return [response.json()]
         
         except Exception as e:
             print("Exception found in cluster_get_credentials()")
@@ -505,11 +500,11 @@ class assisted_installer:
 
     def get_infrastructure_environement_host(self, infra_env_id: str, host_id: str):
         url = self.apiBase + f"infra-envs/{infra_env_id}/hosts/{host_id}"
-        
         try:
             response = requests.get(url, headers=self.__get_headers())
-            print(response.json())
-            return response.json()
+            
+            print([response.json()])
+            return [response.json()]
             
         except Exception as e:
             print("Exception found in get_infrastructure_environement_host()")
@@ -527,8 +522,8 @@ class assisted_installer:
                 print(f"Successfully created new openshift host: {response.json()['id']}")
             else:
                 print("Failed to create new openshift host")
-            print(response.json())
-            return response.json()
+            print([response.json()])
+            return [response.json()]
             
         except Exception as e:
             print("Exception found in post_infrastructure_environement_host()")
@@ -568,6 +563,9 @@ class assisted_installer:
            
             else:
                 print(f"Failed to bind host {host_id} to infra-env {infra_env_id}")
+            
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in host_actions_bind()")
@@ -585,11 +583,14 @@ class assisted_installer:
            
             else:
                 print(f"Failed to unbind host {host_id} from infra-env {infra_env_id}")
+            
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in host_actions_unbind()")
             print(e)
-
+        
 
     def host_actions_install(self, infra_env_id: str, host_id: str):
         url = self.apiBase + f"infra-envs/{infra_env_id}/hosts/{host_id}/actions/install"
@@ -601,6 +602,9 @@ class assisted_installer:
                 print(f"Successfully initiated host installation for {host_id} from infra-env {infra_env_id}")
             else:
                 print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
+            
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in host_actions_install()")
@@ -616,6 +620,9 @@ class assisted_installer:
                 print(f"Successfully initiated host installation for {host_id} from infra-env {infra_env_id}")
             else:
                 print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
+            
+            print([response.json()])
+            return [response.json()]
 
         except Exception as e:
             print("Exception found in host_actions_reset()")
