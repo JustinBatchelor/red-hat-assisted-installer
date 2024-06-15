@@ -5,11 +5,18 @@ sys.dont_write_bytecode = True
 
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
-import redhat_assisted_installer.assistedinstaller as assistedinstaller
+import redhat_assisted_installer.assisted_installer as assisted_installer
 
-installer = assistedinstaller.assistedinstaller()
+installer = assisted_installer.assisted_installer()
 
-installer.postCluster(f"ocp-testing", "4.15")
+try:
+    cluster = installer.post_cluster("ocp-testing", "4.15")
+    installer.delete_cluster(cluster['id'])
 
-for cluster in installer.getClusters():
-    installer.deleteCluster(cluster['id'])
+    clusters = installer.get_clusters()
+    print(clusters)
+except Exception as e:
+    print(e)
+
+
+

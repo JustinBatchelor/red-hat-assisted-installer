@@ -7,15 +7,16 @@ sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
 import redhat_assisted_installer.assisted_installer as assisted_installer
 
-from redhat_assisted_installer.lib.schemas import *
-
 installer = assisted_installer.assisted_installer()
 
 
 try:
-    cluster = installer.post_cluster("ocp-testing", "4.15")
+    infra_env = installer.post_infrastructure_environment("pypi-testing")
+    installer.delete_infrastructure_environment(infra_env['id'])
+    print(installer.get_infrastructure_environements())
 
 except Exception as e:
+    print("Raised Exception")
     print(e)
 
-    
+

@@ -18,5 +18,5 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/JustinBatchelor/red-hat-assisted-installer"
-Issues = "https://github.com/JustinBatchelor/red-hat-assisted-installer/issues"
+Homepage = "https://github.com/JustinBatchelor/redhat-assisted-installer"
+Issues = "https://github.com/JustinBatchelor/redhat-assisted-installer/issues"
