@@ -7,6 +7,8 @@ from urllib.parse import urlencode
 
 from .lib.schemas import *
 
+from requests.exceptions import HTTPError
+
 class assisted_installer:
     def __init__(self) -> None:
         self.apiBase = "https://api.openshift.com/api/assisted-install/v2/"
@@ -39,15 +41,16 @@ class assisted_installer:
         try:
             # Make the POST request
             response = requests.post(url, headers=headers, data=data)
+            response.raise_for_status()
+            access_token = response.json().get("access_token")
+            return access_token
 
-            # Handle response
-            if response.status_code == 200:
-                # Extract access token from the response JSON
-                access_token = response.json().get("access_token")
-                return access_token
-            else:
-                # raise response.raise_for_status()
-                return response.json()
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to __get_access_token")
+            print("__get_access_token() returned a bad status code")
+            print(e)
+
+
         except Exception as e:
             print("Exception found in __get_access_token()")
             print(e)
@@ -58,9 +61,14 @@ class assisted_installer:
 
         try:
             response = requests.get(url, headers=self.__get_headers())
+            response.raise_for_status()
             print([response.json()])
             return [response.json()]
         
+        except requests.exceptions.HTTPError as e:
+            print("get_cluster() returned a bad status code")
+            print(e)
+
         except Exception as e:
             print("Exception found in get_cluster()")
             print(e)
@@ -70,9 +78,14 @@ class assisted_installer:
 
         try:
             response = requests.get(url, headers=self.__get_headers())
+            response.raise_for_status()
             print(response.json())
             return response.json()
         
+        except requests.exceptions.HTTPError as e:
+            print("get_default_config() returned a bad status code")
+            print(e)
+            
         except Exception as e:
             print("Exception found in get_default_config()")
             print(e)
@@ -80,7 +93,6 @@ class assisted_installer:
     def get_clusters(self,  with_hosts: Optional[bool]=False, owner: Optional[str]=None):
         url = self.apiBase + "clusters"
 
-        
         if with_hosts:
             if '?' not in url:
                 url += '?'
@@ -93,9 +105,14 @@ class assisted_installer:
         
         try:
             response = requests.get(url, headers=self.__get_headers())
+            response.raise_for_status()
             print(response.json())
             return response.json()
-        
+            
+        except requests.exceptions.HTTPError as e:
+            print("get_clusters() returned a bad status code")
+            print(e)
+            
         except Exception as e:
             print("Exception found in getClusters()")
             print(e)
@@ -142,12 +159,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers(), json=data)
-            if response.status_code == 201:
-                print("Successfully created cluster:")
-            else: 
-                print(f"Failed to create cluster")
+            response.raise_for_status()    
+            print("Successfully created cluster:")
             print([response.json()])
             return [response.json()]
+        
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to create cluster")
+            print("post_cluster() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in post_cluster()")
@@ -194,14 +214,15 @@ class assisted_installer:
 
         try:
             response = requests.patch(url, headers=self.__get_headers(), json=data)
-
-            if response.status_code == 201:
-                print(f"Successfully patched cluster: {id}")
-                
-            else:
-                print(f"Failed to patch cluster: {id}")
+            response.raise_for_status()
+            print(f"Successfully patched cluster: {id}")
             print([response.json()])
             return [response.json()]
+        
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to patch cluster: {id}")
+            print("patch_cluster() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in patch_cluster()")
@@ -213,15 +234,17 @@ class assisted_installer:
 
         try:
             response = requests.delete(url, headers=self.__get_headers())
+            response.raise_for_status()
+            print(f"Successfully deleted cluster: {id}")
+            return True
 
-            if response.status_code == 204:
-                print(f"Successfully deleted cluster: {id}")
-                return True
-            else:
-                print(f"Failed to delete cluster: {id}")
-                return False 
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to delete cluster: {id}")
+            print("delete_cluster() returned a bad status code")
+            print(e)
 
         except Exception as e:
+            print(f"Failed to delete cluster: {id}")
             print("Exception found in delete_cluster()")
             print(e)
 
@@ -231,9 +254,14 @@ class assisted_installer:
 
         try:
             response = requests.get(url, headers=self.__get_headers())
+            response.raise_for_status()
             print([response.json()])
             return [response.json()]
             
+        except requests.exceptions.HTTPError as e:
+            print("get_infrastructure_environement() returned a bad status code")
+            print(e)
+    
         except Exception as e:
             print("Exception found in get_infrastructure_environment()")
             print(e)   
@@ -244,8 +272,13 @@ class assisted_installer:
         
         try:
             response = requests.get(url, headers=self.__get_headers())
+            response.raise_for_status()
             print(response.json())
             return response.json()
+        
+        except requests.exceptions.HTTPError as e:
+            print("get_infrastructure_environements() returned a bad status code")
+            print(e)
             
         except Exception as e:
             print("Exception found in get_infrastructure_environments()")
@@ -271,13 +304,15 @@ class assisted_installer:
 
         try:
             response = requests.patch(url, headers=self.__get_headers(), json=data)
-
-            if response.status_code == 201:
-                print(f"Successfully patched infra-env: {id}")
-            else:
-                print(f"Failed to patch infra-env: {id}")
+            response.raise_for_status()
+            print(f"Successfully patched infra-env: {id}")
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print("patch_infrastructure_environment() returned a bad status code")
+            print(e)
+            
 
         except Exception as e:
             print("Exception found in patch_infrastructure_environment()")
@@ -308,13 +343,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers(), json=data)
-            if response.status_code == 201:
-                print("Successfully created infra-env:")
-            else: 
-                print(f"Failed to create infra-env")
+            response.raise_for_status()
+            print("Successfully created infra-env:") 
             print([response.json()])
             return [response.json()]
-
+        
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to create infra-env")
+            print("post_infrastructure_environment() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in post_infrastructure_environment()")
@@ -325,13 +362,14 @@ class assisted_installer:
 
         try:
             response = requests.delete(url, headers=self.__get_headers())
+            response.raise_for_status()
+            print(f"Successfully deleted infra-env: {id}")
+            return True
 
-            if response.status_code == 204:
-                print(f"Successfully deleted infra-env: {id}")
-                return True
-            else:
-                print(f"Failed to delete infra-env: {id}")
-                return False 
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to delete infra-env")
+            print("delete_infrastructure_environment() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in delete_infrastructure_environment()")
@@ -343,13 +381,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 202:
-                print(f"Successfully initiated action 'allow-add-hosts' for cluster: {id}")
-            else:
-                print(f"Failed to initiate action 'allow-add-hosts' for cluster: {id}")
+            response.raise_for_status()
+            print(f"Successfully initiated action 'allow-add-hosts' for cluster: {id}")
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to initiate action 'allow-add-hosts' for cluster: {id}")
+            print("cluster_action_allow_add_hosts() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in allow_add_hosts()")
@@ -361,13 +401,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 202:
-                print(f"Successfully initiated action 'allow-add-workers' for cluster: {id}")
-            else:
-                print(f"Failed to initiate action 'allow-add-workers' for cluster: {id}")
+            response.raise_for_status()
+            print(f"Successfully initiated action 'allow-add-workers' for cluster: {id}")  
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to initiate action 'cluster_action_allow_add_workers' for cluster: {id}")
+            print("cluster_action_allow_add_workers() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in cluster_action_allow_add_workers()")
@@ -378,13 +420,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 202:
-                print(f"Successfully canceled installation for cluster: {id}")
-            else:
-                print(f"Failed to cancel installation for cluster: {id}")
+            response.raise_for_status()
+            print(f"Successfully canceled installation for cluster: {id}") 
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to cancel installation for cluster: {id}")
+            print("cluster_action_cancel() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in cluster_action_cancel()")
@@ -392,16 +436,18 @@ class assisted_installer:
 
     def cluster_action_complete_installation(self, id):
         url = self.apiBase + f"clusters/{id}/actions/complete-installation"
-
+        
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 202:
-                print(f"Successfully complete installation for cluster: {id}")
-            else:
-                print(f"Failed to complete installation for cluster: {id}")
+            response.raise_for_status()
+            print(f"Successfully complete installation for cluster: {id}")      
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to complete installation for cluster: {id}")
+            print("cluster_action_complete_installation() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in cluster_action_complete_installation()")
@@ -413,13 +459,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 202:
-                print(f"Successfully reset cluster: {id}")
-            else:
-                print(f"Failed to reset cluster: {id}")
+            response.raise_for_status()
+            print(f"Successfully reset cluster: {id}")
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to reset cluster: {id}")
+            print("cluster_action_reset() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in cluster_action_reset()")
@@ -431,13 +479,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 202:
-                print(f"Successfully initiated cluster install for cluster: {id}")
-            else:
-                print(f"Failed to initiate cluster install for cluster: {id}")
+            response.raise_for_status()
+            print(f"Successfully initiated cluster install for cluster: {id}")
             print([response.json()])
             return [response.json()]
+        
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to initiate cluster install for cluster: {id}")
+            print("cluster_action_install() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in cluster_action_install()")
@@ -452,12 +502,18 @@ class assisted_installer:
         try:
             if credentials is not None:
                 response = requests.get(url, headers=self.__get_headers(), params=query_string)
+                response.raise_for_status()
                 print(response.text)
                 return response.text
             else:
                 response = requests.get(url, headers=self.__get_headers())
+                response.raise_for_status()
                 print([response.json()])
                 return [response.json()]
+            
+        except requests.exceptions.HTTPError as e:
+            print("cluster_get_credentials() returned a bad status code")
+            print(e)
         
         except Exception as e:
             print("Exception found in cluster_get_credentials()")
@@ -471,9 +527,14 @@ class assisted_installer:
 
         try:
             response = requests.get(url, headers=self.__get_headers(), params=query_string)
+            response.raise_for_status()
             print(response.text)
             return response.text
-        
+
+        except requests.exceptions.HTTPError as e:
+            print("cluster_get_files() returned a bad status code")
+            print(e)
+
         except Exception as e:
             print("Exception found in cluster_get_files()")
             print(e)
@@ -484,9 +545,14 @@ class assisted_installer:
         
         try:
             response = requests.get(url, headers=self.__get_headers())
+            response.raise_for_status()
             print(response.json())
             return response.json()
-            
+
+        except requests.exceptions.HTTPError as e:
+            print("get_infrastructure_environement_hosts() returned a bad status code")
+            print(e)
+
         except Exception as e:
             print("Exception found in get_infrastructure_environement_hosts()")
             print(e)
@@ -495,10 +561,14 @@ class assisted_installer:
         url = self.apiBase + f"infra-envs/{infra_env_id}/hosts/{host_id}"
         try:
             response = requests.get(url, headers=self.__get_headers())
-            
+            response.raise_for_status()
             print([response.json()])
             return [response.json()]
-            
+
+        except requests.exceptions.HTTPError as e:
+            print("get_infrastructure_environement_host() returned a bad status code")
+            print(e)
+
         except Exception as e:
             print("Exception found in get_infrastructure_environement_host()")
             print(e)
@@ -511,13 +581,16 @@ class assisted_installer:
         data = host_create_params.to_dict()
         try:
             response = requests.post(url, headers=self.__get_headers(), json=data)
-            if response.status_code == 201:
-                print(f"Successfully created new openshift host: {response.json()['id']}")
-            else:
-                print("Failed to create new openshift host")
+            response.raise_for_status()
+            print(f"Successfully created new openshift host: {response.json()['id']}")
             print([response.json()])
             return [response.json()]
-            
+
+        except requests.exceptions.HTTPError as e:
+            print("Failed to create new openshift host")
+            print("post_infrastructure_environement_host() returned a bad status code")
+            print(e)
+
         except Exception as e:
             print("Exception found in post_infrastructure_environement_host()")
             print(e)
@@ -528,13 +601,14 @@ class assisted_installer:
 
         try:
             response = requests.delete(url, headers=self.__get_headers())
+            response.raise_for_status()
+            print(f"Successfully deleted host {host_id} from infra-env {infra_env_id}")
+            return True
 
-            if response.status_code == 204:
-                print(f"Successfully deleted host {host_id} from infra-env {infra_env_id}")
-                return True
-            else:
-                print(f"Failed to delete host {host_id} from infra-env {infra_env_id}")
-                return False 
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to delete host {host_id} from infra-env {infra_env_id}")
+            print("post_infrastructure_environement_host() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in delete_infrastructure_environement_host()")
@@ -550,15 +624,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers(), json=data)
-
-            if response.status_code == 200:
-                print(f"Successfully bound host {host_id} to infra-env {infra_env_id} to cluster-id {data['cluster_id']}")
-           
-            else:
-                print(f"Failed to bind host {host_id} to infra-env {infra_env_id}")
-            
+            response.raise_for_status()
+            print(f"Successfully bound host {host_id} to infra-env {infra_env_id} to cluster-id {data['cluster_id']}")
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to bind host {host_id} to infra-env {infra_env_id}")
+            print("host_actions_bind() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in host_actions_bind()")
@@ -570,15 +644,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 200:
-                print(f"Successfully unbound host {host_id} from infra-env {infra_env_id}")
-           
-            else:
-                print(f"Failed to unbind host {host_id} from infra-env {infra_env_id}")
-            
+            response.raise_for_status()
+            print(f"Successfully unbound host {host_id} from infra-env {infra_env_id}")
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to unbind host {host_id} from infra-env {infra_env_id}")
+            print("host_actions_unbind() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in host_actions_unbind()")
@@ -590,14 +664,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 202:
-                print(f"Successfully initiated host installation for {host_id} from infra-env {infra_env_id}")
-            else:
-                print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
-            
+            response.raise_for_status()
+            print(f"Successfully initiated host installation for {host_id} from infra-env {infra_env_id}") 
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
+            print("host_actions_install() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in host_actions_install()")
@@ -608,14 +683,15 @@ class assisted_installer:
 
         try:
             response = requests.post(url, headers=self.__get_headers())
-
-            if response.status_code == 200:
-                print(f"Successfully initiated host installation for {host_id} from infra-env {infra_env_id}")
-            else:
-                print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
-            
+            response.raise_for_status()
+            print(f"Successfully initiated host installation for {host_id} from infra-env {infra_env_id}")
             print([response.json()])
             return [response.json()]
+
+        except requests.exceptions.HTTPError as e:
+            print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
+            print("host_actions_reset() returned a bad status code")
+            print(e)
 
         except Exception as e:
             print("Exception found in host_actions_reset()")
