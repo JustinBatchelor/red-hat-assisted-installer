@@ -36,7 +36,7 @@ class ClusterParams:
         if cluster_id is not None:
             self.params['cluster_id'] = cluster_id
 
-        if pull_secret is not None and is_valid_json(pull_secret):
+        if pull_secret is not None:
             self.params['pull_secret'] = pull_secret
 
         if additional_ntp_source is not None and is_valid_ip(additional_ntp_source):

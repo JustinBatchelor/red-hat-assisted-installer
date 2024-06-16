@@ -88,22 +88,6 @@ def is_valid_base_domain(domain):
     )
     return bool(pattern.match(domain))
 
-def is_valid_json(json_data):
-    """
-    Validate if the given variable is a valid JSON.
-
-    Parameters:
-    json_data (str): The JSON data to validate.
-
-    Returns:
-    bool: True if valid, False otherwise.
-    """
-    try:
-        json.loads(json_data)
-        return True
-    except json.JSONDecodeError:
-        return False
-
 def is_valid_cpu_architecture(cpu_architecture):
     VALID_VALUES = ["x86_64", "aarch64", "arm64", "ppc64le", "s390x", "multi"]
     return cpu_architecture in VALID_VALUES

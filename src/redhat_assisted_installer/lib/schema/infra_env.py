@@ -30,7 +30,7 @@ class InfraEnv:
         if cluster_id is not None:
             self.params['cluster_id'] = cluster_id
 
-        if pull_secret is not None and is_valid_json(pull_secret):
+        if pull_secret is not None:
             self.params['pull_secret'] = pull_secret
 
         if additional_ntp_source is not None and is_valid_ip(additional_ntp_source):
@@ -39,7 +39,7 @@ class InfraEnv:
         if additional_trust_bundle is not None:
             self.params['additional_trust_bundle'] = additional_trust_bundle
 
-        if ignition_config_override is not None and is_valid_json(ignition_config_override):
+        if ignition_config_override is not None:
             self.params['ignition_config_override'] = ignition_config_override
 
         if image_type is not None and (image_type):
