@@ -167,25 +167,25 @@ class ClusterCreateParams:
         self.openshift_version = openshift_version
         self.pull_secret = pull_secret
         self.additional_ntp_source = additional_ntp_source
-        self.api_vips = api_vips
+        # self.api_vips = api_vips
         self.base_dns_domain = base_dns_domain
         self.cluster_network_cidr = cluster_network_cidr
         self.cluster_network_host_prefix = cluster_network_host_prefix
-        self.cluster_networks = cluster_networks
+        # self.cluster_networks = cluster_networks
         self.cpu_architecture = cpu_architecture
         self.disk_encryption = disk_encryption
         self.high_availability_mode = high_availability_mode
         self.http_proxy = http_proxy
         self.https_proxy = https_proxy
         self.hyperthreading = hyperthreading
-        self.ignition_endpoint = ignition_endpoint
-        self.ingress_vips = ingress_vips
-        self.machine_networks = machine_networks
+        # self.ignition_endpoint = ignition_endpoint
+        # self.ingress_vips = ingress_vips
+        # self.machine_networks = machine_networks
         self.network_type = network_type
         self.no_proxy = no_proxy
         self.ocp_release_image = ocp_release_image
-        self.olm_operators = olm_operators
-        self.platform = platform
+        # self.olm_operators = olm_operators
+        # self.platform = platform
         self.schedulable_masters = schedulable_masters
         self.service_network_cidr = service_network_cidr
         self.service_networks = service_networks
@@ -200,25 +200,25 @@ class ClusterCreateParams:
             "openshift_version": self.openshift_version,
             "pull_secret": self.pull_secret,
             "additional_ntp_source": self.additional_ntp_source,
-            "api_vips": [vip.to_dict() for vip in self.api_vips] if self.api_vips else None,
+            # "api_vips": [vip.to_dict() for vip in self.api_vips] if self.api_vips else None,
             "base_dns_domain": self.base_dns_domain,
             "cluster_network_cidr": self.cluster_network_cidr,
             "cluster_network_host_prefix": self.cluster_network_host_prefix,
-            "cluster_networks": [network.to_dict() for network in self.cluster_networks] if self.cluster_networks else None,
+            # "cluster_networks": [network.to_dict() for network in self.cluster_networks] if self.cluster_networks else None,
             "cpu_architecture": self.cpu_architecture,
-            "disk_encryption": self.disk_encryption.to_dict() if self.disk_encryption else None,
+            # "disk_encryption": self.disk_encryption.to_dict() if self.disk_encryption else None,
             "high_availability_mode": self.high_availability_mode,
             "http_proxy": self.http_proxy,
             "https_proxy": self.https_proxy,
             "hyperthreading": self.hyperthreading,
-            "ignition_endpoint": self.ignition_endpoint.to_dict() if self.ignition_endpoint else None,
-            "ingress_vips": [vip.to_dict() for vip in self.ingress_vips] if self.ingress_vips else None,
-            "machine_networks": [network.to_dict() for network in self.machine_networks] if self.machine_networks else None,
+            # "ignition_endpoint": self.ignition_endpoint.to_dict() if self.ignition_endpoint else None,
+            # "ingress_vips": [vip.to_dict() for vip in self.ingress_vips] if self.ingress_vips else None,
+            # "machine_networks": [network.to_dict() for network in self.machine_networks] if self.machine_networks else None,
             "network_type": self.network_type,
             "no_proxy": self.no_proxy,
             "ocp_release_image": self.ocp_release_image,
-            "olm_operators": [operator.to_dict() for operator in self.olm_operators] if self.olm_operators else None,
-            "platform": self.platform.to_dict() if self.platform else None,
+            # "olm_operators": [operator.to_dict() for operator in self.olm_operators] if self.olm_operators else None,
+            # "platform": self.platform.to_dict() if self.platform else None,
             "schedulable_masters": self.schedulable_masters,
             "service_network_cidr": self.service_network_cidr,
             "service_networks": self.service_networks,
@@ -230,18 +230,21 @@ class ClusterCreateParams:
 
 
 class InfraEnvCreateParams:
-    def __init__(self, name: str, pull_secret: str,
+    def __init__(self, 
+                 name: str, 
+                 pull_secret: str,
                  additional_ntp_sources: Optional[str] = None,
                  additional_trust_bundle: Optional[str] = None,
                  cluster_id: Optional[str] = None,
                  cpu_architecture: Optional[str] = "x86_64",
                  ignition_config_override: Optional[str] = None,
-                 image_type: Optional[ImageType] = None,
-                 kernel_arguments: Optional[KernelArguments] = None,
+                #  image_type: Optional[ImageType] = None,
+                #  kernel_arguments: Optional[KernelArguments] = None,
                  openshift_version: Optional[str] = None,
-                 proxy: Optional[Proxy] = None,
+                #  proxy: Optional[Proxy] = None,
                  ssh_authorized_key: Optional[str] = None,
-                 static_network_config: Optional[List[HostStaticNetworkConfig]] = None):
+                #  static_network_config: Optional[List[HostStaticNetworkConfig]] = None,
+                 ):
         self.name = name
         self.pull_secret = pull_secret
         self.additional_ntp_sources = additional_ntp_sources
@@ -249,12 +252,12 @@ class InfraEnvCreateParams:
         self.cluster_id = cluster_id
         self.cpu_architecture = cpu_architecture
         self.ignition_config_override = ignition_config_override
-        self.image_type = image_type
-        self.kernel_arguments = kernel_arguments
+        # self.image_type = image_type
+        # self.kernel_arguments = kernel_arguments
         self.openshift_version = openshift_version
-        self.proxy = proxy
+        # self.proxy = proxy
         self.ssh_authorized_key = ssh_authorized_key
-        self.static_network_config = static_network_config
+        # self.static_network_config = static_network_config
 
     def to_dict(self):
         return {
@@ -265,12 +268,12 @@ class InfraEnvCreateParams:
             "cluster_id": self.cluster_id,
             "cpu_architecture": self.cpu_architecture,
             "ignition_config_override": self.ignition_config_override,
-            "image_type": self.image_type.to_dict() if self.image_type else None,
-            "kernel_arguments": self.kernel_arguments.to_dict() if self.kernel_arguments else None,
+            # "image_type": self.image_type.to_dict() if self.image_type else None,
+            # "kernel_arguments": self.kernel_arguments.to_dict() if self.kernel_arguments else None,
             "openshift_version": self.openshift_version,
-            "proxy": self.proxy.to_dict() if self.proxy else None,
+            # "proxy": self.proxy.to_dict() if self.proxy else None,
             "ssh_authorized_key": self.ssh_authorized_key,
-            "static_network_config": [config.to_dict() for config in self.static_network_config] if self.static_network_config else None
+            # "static_network_config": [config.to_dict() for config in self.static_network_config] if self.static_network_config else None
         }
 
 
@@ -278,22 +281,22 @@ class ClusterUpdateParams:
     def __init__(self,
                  additional_ntp_source: Optional[str] = None,
                  api_vip_dns_name: Optional[str] = None,
-                 api_vips: Optional[List[APIVip]] = None,
+                #  api_vips: Optional[List[APIVip]] = None,
                  base_dns_domain: Optional[str] = None,
                  cluster_network_cidr: Optional[str] = None,
                  cluster_network_host_prefix: Optional[int] = None,
                  cluster_networks: Optional[List[Dict[str, Any]]] = None,
-                 disk_encryption: Optional[DiskEncryption] = None,
+                #  disk_encryption: Optional[DiskEncryption] = None,
                  http_proxy: Optional[str] = None,
                  https_proxy: Optional[str] = None,
                  hyperthreading: Optional[str] = None,
                  ingress_vips: Optional[List[str]] = None,
-                 machine_networks: Optional[List[MachineNetwork]] = None,
+                #  machine_networks: Optional[List[MachineNetwork]] = None,
                  name: Optional[str] = None,
                  network_type: Optional[str] = None,
                  no_proxy: Optional[str] = None,
-                 olm_operators: Optional[List[OperatorCreateParams]] = None,
-                 platform: Optional[Platform] = None,
+                #  olm_operators: Optional[List[OperatorCreateParams]] = None,
+                #  platform: Optional[Platform] = None,
                  pull_secret: Optional[str] = None,
                  schedulable_masters: Optional[bool] = None,
                  service_network_cidr: Optional[str] = None,
@@ -304,22 +307,22 @@ class ClusterUpdateParams:
                  vip_dhcp_allocation: Optional[bool] = None):
         self.additional_ntp_source = additional_ntp_source
         self.api_vip_dns_name = api_vip_dns_name
-        self.api_vips = api_vips
+        # self.api_vips = api_vips
         self.base_dns_domain = base_dns_domain
         self.cluster_network_cidr = cluster_network_cidr
         self.cluster_network_host_prefix = cluster_network_host_prefix
         self.cluster_networks = cluster_networks
-        self.disk_encryption = disk_encryption
+        # self.disk_encryption = disk_encryption
         self.http_proxy = http_proxy
         self.https_proxy = https_proxy
         self.hyperthreading = hyperthreading
         self.ingress_vips = ingress_vips
-        self.machine_networks = machine_networks
+        # self.machine_networks = machine_networks
         self.name = name
         self.network_type = network_type
         self.no_proxy = no_proxy
-        self.olm_operators = olm_operators
-        self.platform = platform
+        # self.olm_operators = olm_operators
+        # self.platform = platform
         self.pull_secret = pull_secret
         self.schedulable_masters = schedulable_masters
         self.service_network_cidr = service_network_cidr
@@ -338,17 +341,17 @@ class ClusterUpdateParams:
             "cluster_network_cidr": self.cluster_network_cidr,
             "cluster_network_host_prefix": self.cluster_network_host_prefix,
             "cluster_networks": self.cluster_networks,
-            "disk_encryption": self.disk_encryption.to_dict() if self.disk_encryption else None,
+            # "disk_encryption": self.disk_encryption.to_dict() if self.disk_encryption else None,
             "http_proxy": self.http_proxy,
             "https_proxy": self.https_proxy,
             "hyperthreading": self.hyperthreading,
             "ingress_vips": self.ingress_vips,
-            "machine_networks": [network.to_dict() for network in self.machine_networks] if self.machine_networks else None,
+            # "machine_networks": [network.to_dict() for network in self.machine_networks] if self.machine_networks else None,
             "name": self.name,
             "network_type": self.network_type,
             "no_proxy": self.no_proxy,
-            "olm_operators": [operator.to_dict() for operator in self.olm_operators] if self.olm_operators else None,
-            "platform": self.platform.to_dict() if self.platform else None,
+            # "olm_operators": [operator.to_dict() for operator in self.olm_operators] if self.olm_operators else None,
+            # "platform": self.platform.to_dict() if self.platform else None,
             "pull_secret": self.pull_secret,
             "schedulable_masters": self.schedulable_masters,
             "service_network_cidr": self.service_network_cidr,
@@ -365,20 +368,21 @@ class InfraEnvUpdateParams:
                  additional_trust_bundle: Optional[str] = None,
                  ignition_config_override: Optional[str] = None,
                  image_type: Optional[str] = None,
-                 kernel_arguments: Optional[KernelArguments] = None,
-                 proxy: Optional[Proxy] = None,
+                #  kernel_arguments: Optional[KernelArguments] = None,
+                #  proxy: Optional[Proxy] = None,
                  pull_secret: Optional[str] = None,
                  ssh_authorized_key: Optional[str] = None,
-                 static_network_config: Optional[List[HostStaticNetworkConfig]] = None):
+                #  static_network_config: Optional[List[HostStaticNetworkConfig]] = None,
+                 ):
         self.additional_ntp_sources = additional_ntp_sources
         self.additional_trust_bundle = additional_trust_bundle
         self.ignition_config_override = ignition_config_override
         self.image_type = image_type
-        self.kernel_arguments = kernel_arguments
-        self.proxy = proxy
+        # self.kernel_arguments = kernel_arguments
+        # self.proxy = proxy
         self.pull_secret = pull_secret
         self.ssh_authorized_key = ssh_authorized_key
-        self.static_network_config = static_network_config
+        # self.static_network_config = static_network_config
 
     def to_dict(self):
         return {
@@ -386,11 +390,11 @@ class InfraEnvUpdateParams:
             "additional_trust_bundle": self.additional_trust_bundle,
             "ignition_config_override": self.ignition_config_override,
             "image_type": self.image_type,
-            "kernel_arguments": self.kernel_arguments.to_dict() if self.kernel_arguments else None,
-            "proxy": self.proxy.to_dict() if self.proxy else None,
+            # "kernel_arguments": self.kernel_arguments.to_dict() if self.kernel_arguments else None,
+            # "proxy": self.proxy.to_dict() if self.proxy else None,
             "pull_secret": self.pull_secret,
             "ssh_authorized_key": self.ssh_authorized_key,
-            "static_network_config": [config.to_dict() for config in self.static_network_config] if self.static_network_config else None
+            # "static_network_config": [config.to_dict() for config in self.static_network_config] if self.static_network_config else None
         }
     
 class HostCreateParams:
