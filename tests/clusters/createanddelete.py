@@ -11,7 +11,8 @@ from requests.exceptions import HTTPError
 installer = assisted_installer.assisted_installer()
 
 try:
-    cluster = installer.post_cluster("pypi-testing", "4.15")
+    cluster = installer.post_cluster(name="pypi-testing", 
+                                     openshift_version="4.15", "example.com", )
     installer.delete_cluster(cluster[0]['id'])
     clusters = installer.get_clusters()
     print(len(clusters))
