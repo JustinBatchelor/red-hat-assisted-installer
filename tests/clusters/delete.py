@@ -17,7 +17,6 @@ except HTTPError as e:
     print("bad response code")
     print(e)
 
-
 except Exception as e:
     print("Found Exception")
     print(e)
