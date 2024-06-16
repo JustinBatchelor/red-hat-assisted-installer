@@ -117,43 +117,54 @@ class assisted_installer:
             print("Exception found in getClusters()")
             print(e)
 
-    def post_cluster(self, name: str, openshift_version: str, pull_secret: str = os.environ.get("REDHAT_PULL_SECRET") if "REDHAT_PULL_SECRET" in os.environ else "",
-                 additional_ntp_source: Optional[str] = None,
-                #  api_vips: Optional[List[APIVip]] = None,
-                 base_dns_domain: Optional[str] = None,
-                 cluster_network_cidr: Optional[str] = "10.128.0.0/14",
-                 cluster_network_host_prefix: Optional[int] = 23,
-                #  cluster_networks: Optional[List[ClusterNetwork]] = None,
-                 cpu_architecture: Optional[str] = "x86_64",
-                #  disk_encryption: Optional[DiskEncryption] = None,
-                 high_availability_mode: Optional[str] = "Full",
-                 http_proxy: Optional[str] = None,
-                 https_proxy: Optional[str] = None,
-                 hyperthreading: Optional[str] = "all",
-                #  ignition_endpoint: Optional[IgnitionEndpoint] = None,
-                #  ingress_vips: Optional[List[IngressVip]] = None,
-                #  machine_networks: Optional[List[MachineNetwork]] = None,
-                 network_type: Optional[str] = None,
-                 no_proxy: Optional[str] = None,
-                 ocp_release_image: Optional[str] = None,
-                #  olm_operators: Optional[List[OperatorCreateParams]] = None,
-                #  platform: Optional[Platform] = None,
-                 schedulable_masters: Optional[bool] = False,
-                 service_network_cidr: Optional[str] = "172.30.0.0/16",
-                 service_networks: Optional[List[Dict[str, Any]]] = None,
-                 ssh_public_key: Optional[str] = None,
-                 tags: Optional[str] = None,
-                 user_managed_networking: Optional[bool] = False,
-                 vip_dhcp_allocation: Optional[bool] = False):
+    def post_cluster(self, 
+                     name: str, 
+                     openshift_version: str, 
+                     pull_secret: str,
+                     additional_ntp_source: Optional[str] = None,
+                     base_dns_domain: Optional[str] = None,
+                     cluster_network_cidr: Optional[str] = "10.128.0.0/14",
+                     cluster_network_host_prefix: Optional[int] = 23,
+                     cpu_architecture: Optional[str] = "x86_64",
+                     high_availability_mode: Optional[str] = "Full",
+                     http_proxy: Optional[str] = None,
+                     https_proxy: Optional[str] = None,
+                     hyperthreading: Optional[str] = "all",
+                     network_type: Optional[str] = None,
+                     no_proxy: Optional[str] = None,
+                     ocp_release_image: Optional[str] = None,
+                     schedulable_masters: Optional[bool] = False,
+                     service_network_cidr: Optional[str] = "172.30.0.0/16",
+                     ssh_public_key: Optional[str] = None,
+                     tags: Optional[str] = None,
+                     user_managed_networking: Optional[bool] = False,
+                     vip_dhcp_allocation: Optional[bool] = False,
+                 ):
         
         url = self.apiBase + "clusters"
 
-        cluster_create_params = ClusterCreateParams(name=name, openshift_version=openshift_version, pull_secret=pull_secret, additional_ntp_source=additional_ntp_source,
-                                                    base_dns_domain=base_dns_domain, cluster_network_cidr=cluster_network_cidr, cluster_network_host_prefix=cluster_network_host_prefix, 
-                                                    cpu_architecture=cpu_architecture, high_availability_mode=high_availability_mode, 
-                                                    http_proxy=http_proxy, https_proxy=https_proxy, hyperthreading=hyperthreading, network_type=network_type, no_proxy=no_proxy, ocp_release_image=ocp_release_image,
-                                                    schedulable_masters=schedulable_masters, service_network_cidr=service_network_cidr,service_networks=service_networks, 
-                                                    ssh_public_key=ssh_public_key, tags=tags, user_managed_networking=user_managed_networking, vip_dhcp_allocation=vip_dhcp_allocation)
+        cluster_create_params = ClusterCreateParams(name=name, 
+                                                    openshift_version=openshift_version, 
+                                                    pull_secret=pull_secret, 
+                                                    additional_ntp_source=additional_ntp_source,
+                                                    base_dns_domain=base_dns_domain, 
+                                                    cluster_network_cidr=cluster_network_cidr, 
+                                                    cluster_network_host_prefix=cluster_network_host_prefix, 
+                                                    cpu_architecture=cpu_architecture, 
+                                                    high_availability_mode=high_availability_mode, 
+                                                    http_proxy=http_proxy, 
+                                                    https_proxy=https_proxy, 
+                                                    hyperthreading=hyperthreading, 
+                                                    network_type=network_type, 
+                                                    no_proxy=no_proxy, 
+                                                    ocp_release_image=ocp_release_image,
+                                                    schedulable_masters=schedulable_masters, 
+                                                    service_network_cidr=service_network_cidr,
+                                                    ssh_public_key=ssh_public_key, 
+                                                    tags=tags, 
+                                                    user_managed_networking=user_managed_networking, 
+                                                    vip_dhcp_allocation=vip_dhcp_allocation,
+                                                    )
         data = cluster_create_params.to_dict()
 
         try:
@@ -173,53 +184,61 @@ class assisted_installer:
             print(e)
 
 
-    def patch_cluster(self, id: str, pull_secret: str =  os.environ.get("REDHAT_PULL_SECRET") if "REDHAT_PULL_SECRET" in os.environ else "",
-                 additional_ntp_source: Optional[str] = None,
-                 api_vip_dns_name: Optional[str] = None,
-                #  api_vips: Optional[List[APIVip]] = None,
-                 base_dns_domain: Optional[str] = None,
-                 cluster_network_cidr: Optional[str] = None,
-                 cluster_network_host_prefix: Optional[int] = None,
-                 cluster_networks: Optional[List[Dict[str, Any]]] = None,
-                #  disk_encryption: Optional[DiskEncryption] = None,
-                 http_proxy: Optional[str] = None,
-                 https_proxy: Optional[str] = None,
-                 hyperthreading: Optional[str] = None,
-                 ingress_vips: Optional[List[str]] = None,
-                #  machine_networks: Optional[List[MachineNetwork]] = None,
-                 name: Optional[str] = None,
-                 network_type: Optional[str] = None,
-                 no_proxy: Optional[str] = None,
-                #  olm_operators: Optional[List[OperatorCreateParams]] = None,
-                #  platform: Optional[Platform] = None,
-                 schedulable_masters: Optional[bool] = None,
-                 service_network_cidr: Optional[str] = None,
-                 service_networks: Optional[List[Dict[str, Any]]] = None,
-                 ssh_public_key: Optional[str] = None,
-                 tags: Optional[str] = None,
-                 user_managed_networking: Optional[bool] = None,
-                 vip_dhcp_allocation: Optional[bool] = None):
+    def patch_cluster(self, 
+                      cluster_id: str,
+                      pull_secret: str,
+                      additional_ntp_source: Optional[str] = None,
+                      api_vip_dns_name: Optional[str] = None,
+                      base_dns_domain: Optional[str] = None,
+                      cluster_network_cidr: Optional[str] = None,
+                      cluster_network_host_prefix: Optional[int] = None,
+                      http_proxy: Optional[str] = None,
+                      https_proxy: Optional[str] = None,
+                      hyperthreading: Optional[str] = None,
+                      name: Optional[str] = None,
+                      network_type: Optional[str] = None,
+                      no_proxy: Optional[str] = None,
+                      schedulable_masters: Optional[bool] = None,
+                      service_network_cidr: Optional[str] = None,
+                      ssh_public_key: Optional[str] = None,
+                      tags: Optional[str] = None,
+                      user_managed_networking: Optional[bool] = None,
+                      vip_dhcp_allocation: Optional[bool] = None,
+                 ):
         
-        url = self.apiBase + f"clusters/{id}"
+        url = self.apiBase + f"clusters/{cluster_id}"
 
-        update_cluster_params = ClusterUpdateParams(name=name, pull_secret=pull_secret, additional_ntp_source=additional_ntp_source, 
-                                                    api_vip_dns_name=api_vip_dns_name, base_dns_domain=base_dns_domain, cluster_network_cidr=cluster_network_cidr, 
-                                                    cluster_network_host_prefix=cluster_network_host_prefix, cluster_networks=cluster_networks,
-                                                    http_proxy=http_proxy, https_proxy=https_proxy, hyperthreading=hyperthreading, ingress_vips=ingress_vips,
-                                                    network_type=network_type, no_proxy=no_proxy, schedulable_masters=schedulable_masters, service_network_cidr=service_network_cidr,service_networks=service_networks, 
-                                                    ssh_public_key=ssh_public_key, tags=tags, user_managed_networking=user_managed_networking, vip_dhcp_allocation=vip_dhcp_allocation)
+        update_cluster_params = ClusterUpdateParams(name=name, 
+                                                    pull_secret=pull_secret, 
+                                                    additional_ntp_source=additional_ntp_source, 
+                                                    api_vip_dns_name=api_vip_dns_name, 
+                                                    base_dns_domain=base_dns_domain, 
+                                                    cluster_network_cidr=cluster_network_cidr, 
+                                                    cluster_network_host_prefix=cluster_network_host_prefix, 
+                                                    http_proxy=http_proxy, 
+                                                    https_proxy=https_proxy, 
+                                                    hyperthreading=hyperthreading, 
+                                                    network_type=network_type, 
+                                                    no_proxy=no_proxy, 
+                                                    schedulable_masters=schedulable_masters, 
+                                                    service_network_cidr=service_network_cidr,
+                                                    ssh_public_key=ssh_public_key, 
+                                                    tags=tags, 
+                                                    user_managed_networking=user_managed_networking, 
+                                                    vip_dhcp_allocation=vip_dhcp_allocation,
+                                                    )
         
         data = update_cluster_params.to_dict()
 
         try:
             response = requests.patch(url, headers=self.__get_headers(), json=data)
             response.raise_for_status()
-            print(f"Successfully patched cluster: {id}")
+            print(f"Successfully patched cluster: {cluster_id}")
             print([response.json()])
             return [response.json()]
         
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to patch cluster: {id}")
+            print(f"Failed to patch cluster: {cluster_id}")
             print("patch_cluster() returned a bad status code")
             print(e)
 
@@ -228,22 +247,22 @@ class assisted_installer:
             print(e)
 
 
-    def delete_cluster(self, id):
-        url = self.apiBase + f"clusters/{id}"
+    def delete_cluster(self, cluster_id):
+        url = self.apiBase + f"clusters/{cluster_id}"
 
         try:
             response = requests.delete(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully deleted cluster: {id}")
+            print(f"Successfully deleted cluster: {cluster_id}")
             return True
 
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to delete cluster: {id}")
+            print(f"Failed to delete cluster: {cluster_id}")
             print("delete_cluster() returned a bad status code")
             print(e)
 
         except Exception as e:
-            print(f"Failed to delete cluster: {id}")
+            print(f"Failed to delete cluster: {cluster_id}")
             print("Exception found in delete_cluster()")
             print(e)
 
@@ -283,29 +302,31 @@ class assisted_installer:
             print("Exception found in get_infrastructure_environments()")
             print(e)
 
-    def patch_infrastructure_environment(self, id: str, 
-                 additional_ntp_sources: Optional[str] = None,
-                 additional_trust_bundle: Optional[str] = None,
-                 ignition_config_override: Optional[str] = None,
-                 image_type: Optional[str] = None,
-
-                 proxy: Optional[Proxy] = None,
-                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET") if "REDHAT_PULL_SECRET" in os.environ else "",
-                 ssh_authorized_key: Optional[str] = None,
-
+    def patch_infrastructure_environment(self, 
+                                         infra_env_id: str,
+                                         pull_secret: str,
+                                         additional_ntp_sources: Optional[str] = None,
+                                         additional_trust_bundle: Optional[str] = None,
+                                         ignition_config_override: Optional[str] = None,
+                                         image_type: Optional[str] = None,
+                                         ssh_authorized_key: Optional[str] = None,
                  ):
         
-        url = self.apiBase + f"infra-envs/{id}"
+        url = self.apiBase + f"infra-envs/{infra_env_id}"
 
-        update_cluster_params = InfraEnvUpdateParams(pull_secret=pull_secret, additional_ntp_sources=additional_ntp_sources, additional_trust_bundle=additional_trust_bundle, 
-                                                     ignition_config_override=ignition_config_override, image_type=image_type, proxy=proxy,
-                                                     ssh_authorized_key=ssh_authorized_key) 
+        update_cluster_params = InfraEnvUpdateParams(pull_secret=pull_secret, 
+                                                     additional_ntp_sources=additional_ntp_sources, 
+                                                     additional_trust_bundle=additional_trust_bundle, 
+                                                     ignition_config_override=ignition_config_override, 
+                                                     image_type=image_type,
+                                                     ssh_authorized_key=ssh_authorized_key,
+                                                     ) 
         data = update_cluster_params.to_dict()
 
         try:
             response = requests.patch(url, headers=self.__get_headers(), json=data)
             response.raise_for_status()
-            print(f"Successfully patched infra-env: {id}")
+            print(f"Successfully patched infra-env: {infra_env_id}")
             print([response.json()])
             return [response.json()]
 
@@ -319,26 +340,31 @@ class assisted_installer:
             print(e)
 
 
-    def post_infrastructure_environment(self, name: str, pull_secret: str = os.environ.get("REDHAT_PULL_SECRET") if "REDHAT_PULL_SECRET" in os.environ else "",
-                 additional_ntp_sources: Optional[str] = None,
-                 additional_trust_bundle: Optional[str] = None,
-                 cluster_id: Optional[str] = None,
-                 cpu_architecture: Optional[str] = "x86_64",
-                 ignition_config_override: Optional[str] = None,
-                #  image_type: Optional[ImageType] = None,
-                #  kernel_arguments: Optional[KernelArguments] = None,
-                 openshift_version: Optional[str] = None,
-                #  proxy: Optional[Proxy] = None,
-                 ssh_authorized_key: Optional[str] = None,
-                #  static_network_config: Optional[List[HostStaticNetworkConfig]] = None,
-                 ):
+    def post_infrastructure_environment(self, 
+                                        name: str, 
+                                        pull_secret: str,
+                                        additional_ntp_sources: Optional[str] = None,
+                                        additional_trust_bundle: Optional[str] = None,
+                                        cluster_id: Optional[str] = None,
+                                        cpu_architecture: Optional[str] = "x86_64",
+                                        ignition_config_override: Optional[str] = None,
+                                        openshift_version: Optional[str] = None,
+                                        ssh_authorized_key: Optional[str] = None,
+                                        ):
         
         url = self.apiBase + "infra-envs"
 
 
-        infra_env_create_params = InfraEnvCreateParams(name=name, pull_secret=pull_secret, additional_ntp_sources=additional_ntp_sources, additional_trust_bundle=additional_trust_bundle, 
-                                                       cluster_id=cluster_id, cpu_architecture=cpu_architecture, ignition_config_override=ignition_config_override, 
-                                                       openshift_version=openshift_version, ssh_authorized_key=ssh_authorized_key)
+        infra_env_create_params = InfraEnvCreateParams(name=name, 
+                                                       pull_secret=pull_secret, 
+                                                       additional_ntp_sources=additional_ntp_sources, 
+                                                       additional_trust_bundle=additional_trust_bundle, 
+                                                       cluster_id=cluster_id, 
+                                                       cpu_architecture=cpu_architecture, 
+                                                       ignition_config_override=ignition_config_override, 
+                                                       openshift_version=openshift_version, 
+                                                       ssh_authorized_key=ssh_authorized_key,
+                                                       )
         
         data = infra_env_create_params.to_dict()
 
@@ -358,13 +384,13 @@ class assisted_installer:
             print("Exception found in post_infrastructure_environment()")
             print(e)
 
-    def delete_infrastructure_environment(self, id):
-        url = self.apiBase + f"infra-envs/{id}"
+    def delete_infrastructure_environment(self, infra_env_id: str):
+        url = self.apiBase + f"infra-envs/{infra_env_id}"
 
         try:
             response = requests.delete(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully deleted infra-env: {id}")
+            print(f"Successfully deleted infra-env: {infra_env_id}")
             return True
 
         except requests.exceptions.HTTPError as e:
@@ -377,18 +403,18 @@ class assisted_installer:
             print(e)
 
 
-    def cluster_action_allow_add_hosts(self, id):
-        url = self.apiBase + f"clusters/{id}/actions/allow-add-hosts"
+    def cluster_action_allow_add_hosts(self, cluster_id: str):
+        url = self.apiBase + f"clusters/{cluster_id}/actions/allow-add-hosts"
 
         try:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully initiated action 'allow-add-hosts' for cluster: {id}")
+            print(f"Successfully initiated action 'allow-add-hosts' for cluster: {cluster_id}")
             print([response.json()])
             return [response.json()]
 
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to initiate action 'allow-add-hosts' for cluster: {id}")
+            print(f"Failed to initiate action 'allow-add-hosts' for cluster: {cluster_id}")
             print("cluster_action_allow_add_hosts() returned a bad status code")
             print(e)
 
@@ -397,18 +423,18 @@ class assisted_installer:
             print(e)
 
 
-    def cluster_action_allow_add_workers(self, id):
-        url = self.apiBase + f"clusters/{id}/actions/allow-add-workers"
+    def cluster_action_allow_add_workers(self, cluster_id: str):
+        url = self.apiBase + f"clusters/{cluster_id}/actions/allow-add-workers"
 
         try:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully initiated action 'allow-add-workers' for cluster: {id}")  
+            print(f"Successfully initiated action 'allow-add-workers' for cluster: {cluster_id}")  
             print([response.json()])
             return [response.json()]
 
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to initiate action 'cluster_action_allow_add_workers' for cluster: {id}")
+            print(f"Failed to initiate action 'cluster_action_allow_add_workers' for cluster: {cluster_id}")
             print("cluster_action_allow_add_workers() returned a bad status code")
             print(e)
 
@@ -416,18 +442,18 @@ class assisted_installer:
             print("Exception found in cluster_action_allow_add_workers()")
             print(e)
 
-    def cluster_action_cancel(self, id):
-        url = self.apiBase + f"clusters/{id}/actions/cancel"
+    def cluster_action_cancel(self, cluster_id: str):
+        url = self.apiBase + f"clusters/{cluster_id}/actions/cancel"
 
         try:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully canceled installation for cluster: {id}") 
+            print(f"Successfully canceled installation for cluster: {cluster_id}") 
             print([response.json()])
             return [response.json()]
 
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to cancel installation for cluster: {id}")
+            print(f"Failed to cancel installation for cluster: {cluster_id}")
             print("cluster_action_cancel() returned a bad status code")
             print(e)
 
@@ -435,18 +461,18 @@ class assisted_installer:
             print("Exception found in cluster_action_cancel()")
             print(e)
 
-    def cluster_action_complete_installation(self, id):
-        url = self.apiBase + f"clusters/{id}/actions/complete-installation"
+    def cluster_action_complete_installation(self, cluster_id: str):
+        url = self.apiBase + f"clusters/{cluster_id}/actions/complete-installation"
         
         try:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully complete installation for cluster: {id}")      
+            print(f"Successfully complete installation for cluster: {cluster_id}")      
             print([response.json()])
             return [response.json()]
 
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to complete installation for cluster: {id}")
+            print(f"Failed to complete installation for cluster: {cluster_id}")
             print("cluster_action_complete_installation() returned a bad status code")
             print(e)
 
@@ -455,18 +481,18 @@ class assisted_installer:
             print(e)
 
 
-    def cluster_action_reset(self, id):
-        url = self.apiBase + f"clusters/{id}/actions/reset"
+    def cluster_action_reset(self, cluster_id: str):
+        url = self.apiBase + f"clusters/{cluster_id}/actions/reset"
 
         try:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully reset cluster: {id}")
+            print(f"Successfully reset cluster: {cluster_id}")
             print([response.json()])
             return [response.json()]
 
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to reset cluster: {id}")
+            print(f"Failed to reset cluster: {cluster_id}")
             print("cluster_action_reset() returned a bad status code")
             print(e)
 
@@ -475,18 +501,18 @@ class assisted_installer:
             print(e)
 
 
-    def cluster_action_install(self, id):
-        url = self.apiBase + f"clusters/{id}/actions/install"
+    def cluster_action_install(self, cluster_id: str):
+        url = self.apiBase + f"clusters/{cluster_id}/actions/install"
 
         try:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
-            print(f"Successfully initiated cluster install for cluster: {id}")
+            print(f"Successfully initiated cluster install for cluster: {cluster_id}")
             print([response.json()])
             return [response.json()]
         
         except requests.exceptions.HTTPError as e:
-            print(f"Failed to initiate cluster install for cluster: {id}")
+            print(f"Failed to initiate cluster install for cluster: {cluster_id}")
             print("cluster_action_install() returned a bad status code")
             print(e)
 
@@ -494,8 +520,8 @@ class assisted_installer:
             print("Exception found in cluster_action_install()")
             print(e)
 
-    def cluster_get_credentials(self, id: str, credentials: Optional[str] = None):
-        endpoint = f"clusters/{id}/downloads/credentials" if credentials is not None else f"clusters/{id}/credentials"
+    def cluster_get_credentials(self, cluster_id: str, credentials: Optional[str] = None):
+        endpoint = f"clusters/{cluster_id}/downloads/credentials" if credentials is not None else f"clusters/{cluster_id}/credentials"
         url = self.apiBase + endpoint
         
         query_string = {"file_name": credentials}
@@ -521,8 +547,8 @@ class assisted_installer:
             print(e)
 
 
-    def cluster_get_files(self, id: str, file_name: str = "install-config.yaml"):
-        url = self.apiBase + f"clusters/{id}/downloads/files"
+    def cluster_get_files(self, cluster_id: str, file_name: str = "install-config.yaml"):
+        url = self.apiBase + f"clusters/{cluster_id}/downloads/files"
         
         query_string = {"file_name": file_name}
 
