@@ -1,10 +1,9 @@
-import os
 
 class ClusterCreateParams:
     def __init__(self, 
                  name: str, 
                  openshift_version: str, 
-                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                 pull_secret: str,
                  additional_ntp_source: str = None,
                  base_dns_domain: str = None,
                  cluster_network_cidr: str = None,
@@ -53,7 +52,7 @@ class ClusterCreateParams:
 class InfraEnvCreateParams:
     def __init__(self, 
                  name: str, 
-                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                 pull_secret: str,
                  additional_ntp_sources: str = None,
                  additional_trust_bundle: str = None,
                  cluster_id: str = None,
@@ -78,7 +77,7 @@ class InfraEnvCreateParams:
 
 class ClusterUpdateParams:
     def __init__(self,
-                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                 pull_secret: str,
                  additional_ntp_source: str = None,
                  api_vip_dns_name: str = None,
                  base_dns_domain: str = None,

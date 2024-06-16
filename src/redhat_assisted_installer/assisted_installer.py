@@ -120,7 +120,7 @@ class assisted_installer:
     def post_cluster(self, 
                      name: str, 
                      openshift_version: str, 
-                     pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                     pull_secret: str,
                      additional_ntp_source: str = None,
                      base_dns_domain: str = None,
                      cluster_network_cidr: str = "10.128.0.0/14",
@@ -186,7 +186,7 @@ class assisted_installer:
 
     def patch_cluster(self, 
                       cluster_id: str,
-                      pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                      pull_secret: str,
                       additional_ntp_source: str = None,
                       api_vip_dns_name: str = None,
                       base_dns_domain: str = None,
@@ -304,7 +304,7 @@ class assisted_installer:
 
     def patch_infrastructure_environment(self, 
                                          infra_env_id: str,
-                                         pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                                         pull_secret: str,
                                          additional_ntp_sources: str = None,
                                          additional_trust_bundle: str = None,
                                          ignition_config_override: str = None,
@@ -342,7 +342,7 @@ class assisted_installer:
 
     def post_infrastructure_environment(self, 
                                         name: str, 
-                                        pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                                        pull_secret: str,
                                         additional_ntp_sources: str = None,
                                         additional_trust_bundle: str = None,
                                         cluster_id: str = None,
