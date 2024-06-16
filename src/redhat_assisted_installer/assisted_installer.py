@@ -35,7 +35,7 @@ class assisted_installer:
         data = urlencode({
             "grant_type": "refresh_token",
             "client_id": "cloud-services",
-            "refresh_token": os.environ.get("REDHAT_OFFLINE_TOKEN") if "REDHAT_OFFLINE_TOKEN" in os.environ else ""
+            "refresh_token": os.environ.get("REDHAT_OFFLINE_TOKEN")
         })
 
         try:
@@ -45,7 +45,7 @@ class assisted_installer:
             access_token = response.json().get("access_token")
             return access_token
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to __get_access_token")
             print("__get_access_token() returned a bad status code")
             print(e)
@@ -56,7 +56,7 @@ class assisted_installer:
             print(e)
 
 
-    def get_cluster(self, cluster_id: Optional[str]=None):
+    def get_cluster(self, cluster_id: str=None):
         url = self.apiBase + f"clusters/{cluster_id}"
 
         try:
@@ -65,7 +65,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
         
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("get_cluster() returned a bad status code")
             print(e)
 
@@ -82,7 +82,7 @@ class assisted_installer:
             print(response.json())
             return response.json()
         
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("get_default_config() returned a bad status code")
             print(e)
             
@@ -90,7 +90,7 @@ class assisted_installer:
             print("Exception found in get_default_config()")
             print(e)
 
-    def get_clusters(self,  with_hosts: Optional[bool]=False, owner: Optional[str]=None):
+    def get_clusters(self, with_hosts: bool=False, owner: str=None):
         url = self.apiBase + "clusters"
 
         if with_hosts:
@@ -109,7 +109,7 @@ class assisted_installer:
             print(response.json())
             return response.json()
             
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("get_clusters() returned a bad status code")
             print(e)
             
@@ -120,25 +120,25 @@ class assisted_installer:
     def post_cluster(self, 
                      name: str, 
                      openshift_version: str, 
-                     pull_secret: str,
-                     additional_ntp_source: Optional[str] = None,
-                     base_dns_domain: Optional[str] = None,
-                     cluster_network_cidr: Optional[str] = "10.128.0.0/14",
-                     cluster_network_host_prefix: Optional[int] = 23,
-                     cpu_architecture: Optional[str] = "x86_64",
-                     high_availability_mode: Optional[str] = "Full",
-                     http_proxy: Optional[str] = None,
-                     https_proxy: Optional[str] = None,
-                     hyperthreading: Optional[str] = "all",
-                     network_type: Optional[str] = None,
-                     no_proxy: Optional[str] = None,
-                     ocp_release_image: Optional[str] = None,
-                     schedulable_masters: Optional[bool] = False,
-                     service_network_cidr: Optional[str] = "172.30.0.0/16",
-                     ssh_public_key: Optional[str] = None,
-                     tags: Optional[str] = None,
-                     user_managed_networking: Optional[bool] = False,
-                     vip_dhcp_allocation: Optional[bool] = False,
+                     pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                     additional_ntp_source: str = None,
+                     base_dns_domain: str = None,
+                     cluster_network_cidr: str = "10.128.0.0/14",
+                     cluster_network_host_prefix: int = 23,
+                     cpu_architecture: str = "x86_64",
+                     high_availability_mode: str = "Full",
+                     http_proxy: str = None,
+                     https_proxy: str = None,
+                     hyperthreading: str = "all",
+                     network_type: str = None,
+                     no_proxy: str = None,
+                     ocp_release_image: str = None,
+                     schedulable_masters: bool = False,
+                     service_network_cidr: str = "172.30.0.0/16",
+                     ssh_public_key: str = None,
+                     tags: str = None,
+                     user_managed_networking: bool = False,
+                     vip_dhcp_allocation: bool = False,
                  ):
         
         url = self.apiBase + "clusters"
@@ -174,7 +174,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
         
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to create cluster")
             print("post_cluster() returned a bad status code")
             print(e)
@@ -186,24 +186,24 @@ class assisted_installer:
 
     def patch_cluster(self, 
                       cluster_id: str,
-                      pull_secret: str,
-                      additional_ntp_source: Optional[str] = None,
-                      api_vip_dns_name: Optional[str] = None,
-                      base_dns_domain: Optional[str] = None,
-                      cluster_network_cidr: Optional[str] = None,
-                      cluster_network_host_prefix: Optional[int] = None,
-                      http_proxy: Optional[str] = None,
-                      https_proxy: Optional[str] = None,
-                      hyperthreading: Optional[str] = None,
-                      name: Optional[str] = None,
-                      network_type: Optional[str] = None,
-                      no_proxy: Optional[str] = None,
-                      schedulable_masters: Optional[bool] = None,
-                      service_network_cidr: Optional[str] = None,
-                      ssh_public_key: Optional[str] = None,
-                      tags: Optional[str] = None,
-                      user_managed_networking: Optional[bool] = None,
-                      vip_dhcp_allocation: Optional[bool] = None,
+                      pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                      additional_ntp_source: str = None,
+                      api_vip_dns_name: str = None,
+                      base_dns_domain: str = None,
+                      cluster_network_cidr: str = None,
+                      cluster_network_host_prefix: int = None,
+                      http_proxy: str = None,
+                      https_proxy: str = None,
+                      hyperthreading: str = None,
+                      name: str = None,
+                      network_type: str = None,
+                      no_proxy: str = None,
+                      schedulable_masters: bool = None,
+                      service_network_cidr: str = None,
+                      ssh_public_key: str = None,
+                      tags: str = None,
+                      user_managed_networking: bool = None,
+                      vip_dhcp_allocation: bool = None,
                  ):
         
         url = self.apiBase + f"clusters/{cluster_id}"
@@ -237,7 +237,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
         
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to patch cluster: {cluster_id}")
             print("patch_cluster() returned a bad status code")
             print(e)
@@ -247,7 +247,7 @@ class assisted_installer:
             print(e)
 
 
-    def delete_cluster(self, cluster_id):
+    def delete_cluster(self, cluster_id: str):
         url = self.apiBase + f"clusters/{cluster_id}"
 
         try:
@@ -256,7 +256,7 @@ class assisted_installer:
             print(f"Successfully deleted cluster: {cluster_id}")
             return True
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to delete cluster: {cluster_id}")
             print("delete_cluster() returned a bad status code")
             print(e)
@@ -267,7 +267,7 @@ class assisted_installer:
             print(e)
 
 
-    def get_infrastructure_environement(self, infra_env_id):
+    def get_infrastructure_environement(self, infra_env_id: str):
         url = self.apiBase + f"infra-envs/{infra_env_id}"
 
         try:
@@ -276,7 +276,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
             
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("get_infrastructure_environement() returned a bad status code")
             print(e)
     
@@ -294,7 +294,7 @@ class assisted_installer:
             print(response.json())
             return response.json()
         
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("get_infrastructure_environements() returned a bad status code")
             print(e)
             
@@ -304,12 +304,12 @@ class assisted_installer:
 
     def patch_infrastructure_environment(self, 
                                          infra_env_id: str,
-                                         pull_secret: str,
-                                         additional_ntp_sources: Optional[str] = None,
-                                         additional_trust_bundle: Optional[str] = None,
-                                         ignition_config_override: Optional[str] = None,
-                                         image_type: Optional[str] = None,
-                                         ssh_authorized_key: Optional[str] = None,
+                                         pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                                         additional_ntp_sources: str = None,
+                                         additional_trust_bundle: str = None,
+                                         ignition_config_override: str = None,
+                                         image_type: str = None,
+                                         ssh_authorized_key: str = None,
                  ):
         
         url = self.apiBase + f"infra-envs/{infra_env_id}"
@@ -330,7 +330,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("patch_infrastructure_environment() returned a bad status code")
             print(e)
             
@@ -342,14 +342,14 @@ class assisted_installer:
 
     def post_infrastructure_environment(self, 
                                         name: str, 
-                                        pull_secret: str,
-                                        additional_ntp_sources: Optional[str] = None,
-                                        additional_trust_bundle: Optional[str] = None,
-                                        cluster_id: Optional[str] = None,
-                                        cpu_architecture: Optional[str] = "x86_64",
-                                        ignition_config_override: Optional[str] = None,
-                                        openshift_version: Optional[str] = None,
-                                        ssh_authorized_key: Optional[str] = None,
+                                        pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                                        additional_ntp_sources: str = None,
+                                        additional_trust_bundle: str = None,
+                                        cluster_id: str = None,
+                                        cpu_architecture: str = "x86_64",
+                                        ignition_config_override: str = None,
+                                        openshift_version: str = None,
+                                        ssh_authorized_key: str = None,
                                         ):
         
         url = self.apiBase + "infra-envs"
@@ -375,7 +375,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
         
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to create infra-env")
             print("post_infrastructure_environment() returned a bad status code")
             print(e)
@@ -393,7 +393,7 @@ class assisted_installer:
             print(f"Successfully deleted infra-env: {infra_env_id}")
             return True
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to delete infra-env")
             print("delete_infrastructure_environment() returned a bad status code")
             print(e)
@@ -413,7 +413,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to initiate action 'allow-add-hosts' for cluster: {cluster_id}")
             print("cluster_action_allow_add_hosts() returned a bad status code")
             print(e)
@@ -433,7 +433,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to initiate action 'cluster_action_allow_add_workers' for cluster: {cluster_id}")
             print("cluster_action_allow_add_workers() returned a bad status code")
             print(e)
@@ -452,7 +452,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to cancel installation for cluster: {cluster_id}")
             print("cluster_action_cancel() returned a bad status code")
             print(e)
@@ -471,7 +471,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to complete installation for cluster: {cluster_id}")
             print("cluster_action_complete_installation() returned a bad status code")
             print(e)
@@ -491,7 +491,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to reset cluster: {cluster_id}")
             print("cluster_action_reset() returned a bad status code")
             print(e)
@@ -511,7 +511,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
         
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to initiate cluster install for cluster: {cluster_id}")
             print("cluster_action_install() returned a bad status code")
             print(e)
@@ -520,7 +520,7 @@ class assisted_installer:
             print("Exception found in cluster_action_install()")
             print(e)
 
-    def cluster_get_credentials(self, cluster_id: str, credentials: Optional[str] = None):
+    def cluster_get_credentials(self, cluster_id: str, credentials: str = None):
         endpoint = f"clusters/{cluster_id}/downloads/credentials" if credentials is not None else f"clusters/{cluster_id}/credentials"
         url = self.apiBase + endpoint
         
@@ -538,7 +538,7 @@ class assisted_installer:
                 print([response.json()])
                 return [response.json()]
             
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("cluster_get_credentials() returned a bad status code")
             print(e)
         
@@ -558,7 +558,7 @@ class assisted_installer:
             print(response.text)
             return response.text
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("cluster_get_files() returned a bad status code")
             print(e)
 
@@ -576,7 +576,7 @@ class assisted_installer:
             print(response.json())
             return response.json()
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("get_infrastructure_environement_hosts() returned a bad status code")
             print(e)
 
@@ -592,7 +592,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("get_infrastructure_environement_host() returned a bad status code")
             print(e)
 
@@ -600,7 +600,7 @@ class assisted_installer:
             print("Exception found in get_infrastructure_environement_host()")
             print(e)
 
-    def post_infrastructure_environement_host(self, infra_env_id: str, host_id: str, discovery_agent_version: Optional[str] = None):
+    def post_infrastructure_environement_host(self, infra_env_id: str, host_id: str, discovery_agent_version: str = None):
         url = self.apiBase + f"infra-envs/{infra_env_id}/hosts"
         
         host_create_params = HostCreateParams(host_id=host_id, discovery_agent_version=discovery_agent_version)
@@ -613,7 +613,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print("Failed to create new openshift host")
             print("post_infrastructure_environement_host() returned a bad status code")
             print(e)
@@ -632,7 +632,7 @@ class assisted_installer:
             print(f"Successfully deleted host {host_id} from infra-env {infra_env_id}")
             return True
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to delete host {host_id} from infra-env {infra_env_id}")
             print("post_infrastructure_environement_host() returned a bad status code")
             print(e)
@@ -656,7 +656,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to bind host {host_id} to infra-env {infra_env_id}")
             print("host_actions_bind() returned a bad status code")
             print(e)
@@ -676,7 +676,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to unbind host {host_id} from infra-env {infra_env_id}")
             print("host_actions_unbind() returned a bad status code")
             print(e)
@@ -696,7 +696,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
             print("host_actions_install() returned a bad status code")
             print(e)
@@ -715,7 +715,7 @@ class assisted_installer:
             print([response.json()])
             return [response.json()]
 
-        except requests.exceptions.HTTPError as e:
+        except HTTPError as e:
             print(f"Failed to initiate host installation {host_id} from infra-env {infra_env_id}")
             print("host_actions_reset() returned a bad status code")
             print(e)

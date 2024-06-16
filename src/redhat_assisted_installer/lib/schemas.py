@@ -1,29 +1,27 @@
-from typing import List, Optional, Dict, Any, Union
-
-
+import os
 class ClusterCreateParams:
     def __init__(self, 
                  name: str, 
                  openshift_version: str, 
-                 pull_secret: str,
-                 additional_ntp_source: Optional[str] = None,
-                 base_dns_domain: Optional[str] = None,
-                 cluster_network_cidr: Optional[str] = "10.128.0.0/14",
-                 cluster_network_host_prefix: Optional[int] = 23,
-                 cpu_architecture: Optional[str] = "x86_64",
-                 high_availability_mode: Optional[str] = "None",
-                 http_proxy: Optional[str] = None,
-                 https_proxy: Optional[str] = None,
-                 hyperthreading: Optional[str] = "all",
-                 network_type: Optional[str] = None,
-                 no_proxy: Optional[str] = None,
-                 ocp_release_image: Optional[str] = None,
-                 schedulable_masters: Optional[bool] = False,
-                 service_network_cidr: Optional[str] = "172.30.0.0/16",
-                 ssh_public_key: Optional[str] = None,
-                 tags: Optional[str] = None,
-                 user_managed_networking: Optional[bool] = False,
-                 vip_dhcp_allocation: Optional[bool] = False,
+                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                 additional_ntp_source: str = None,
+                 base_dns_domain: str = None,
+                 cluster_network_cidr: str = "10.128.0.0/14",
+                 cluster_network_host_prefix: int = 23,
+                 cpu_architecture: str = "x86_64",
+                 high_availability_mode: str = "None",
+                 http_proxy: str = None,
+                 https_proxy: str = None,
+                 hyperthreading: str = "all",
+                 network_type: str = None,
+                 no_proxy: str = None,
+                 ocp_release_image: str = None,
+                 schedulable_masters: int = False,
+                 service_network_cidr: str = "172.30.0.0/16",
+                 ssh_public_key: str = None,
+                 tags: str = None,
+                 user_managed_networking: int = False,
+                 vip_dhcp_allocation: int = False,
                 ):
         self.name = name
         self.openshift_version = openshift_version
@@ -76,14 +74,14 @@ class ClusterCreateParams:
 class InfraEnvCreateParams:
     def __init__(self, 
                  name: str, 
-                 pull_secret: str,
-                 additional_ntp_sources: Optional[str] = None,
-                 additional_trust_bundle: Optional[str] = None,
-                 cluster_id: Optional[str] = None,
-                 cpu_architecture: Optional[str] = "x86_64",
-                 ignition_config_override: Optional[str] = None,
-                 openshift_version: Optional[str] = None,
-                 ssh_authorized_key: Optional[str] = None,
+                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                 additional_ntp_sources: str = None,
+                 additional_trust_bundle: str = None,
+                 cluster_id: str = None,
+                 cpu_architecture: str = "x86_64",
+                 ignition_config_override: str = None,
+                 openshift_version: str = None,
+                 ssh_authorized_key: str = None,
                  ):
         self.name = name
         self.pull_secret = pull_secret
@@ -111,24 +109,24 @@ class InfraEnvCreateParams:
 
 class ClusterUpdateParams:
     def __init__(self,
-                 pull_secret: str,
-                 additional_ntp_source: Optional[str] = None,
-                 api_vip_dns_name: Optional[str] = None,
-                 base_dns_domain: Optional[str] = None,
-                 cluster_network_cidr: Optional[str] = None,
-                 cluster_network_host_prefix: Optional[int] = None,
-                 http_proxy: Optional[str] = None,
-                 https_proxy: Optional[str] = None,
-                 hyperthreading: Optional[str] = None,
-                 name: Optional[str] = None,
-                 network_type: Optional[str] = None,
-                 no_proxy: Optional[str] = None,
-                 schedulable_masters: Optional[bool] = None,
-                 service_network_cidr: Optional[str] = None,
-                 ssh_public_key: Optional[str] = None,
-                 tags: Optional[str] = None,
-                 user_managed_networking: Optional[bool] = None,
-                 vip_dhcp_allocation: Optional[bool] = None,
+                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                 additional_ntp_source: str = None,
+                 api_vip_dns_name: str = None,
+                 base_dns_domain: str = None,
+                 cluster_network_cidr: str = None,
+                 cluster_network_host_prefix: int = None,
+                 http_proxy: str = None,
+                 https_proxy: str = None,
+                 hyperthreading: str = None,
+                 name: str = None,
+                 network_type: str = None,
+                 no_proxy: str = None,
+                 schedulable_masters: int = None,
+                 service_network_cidr: str = None,
+                 ssh_public_key: str = None,
+                 tags: str = None,
+                 user_managed_networking: int = None,
+                 vip_dhcp_allocation: int = None,
                  ):
         self.additional_ntp_source = additional_ntp_source
         self.api_vip_dns_name = api_vip_dns_name
@@ -174,11 +172,11 @@ class ClusterUpdateParams:
 class InfraEnvUpdateParams:
     def __init__(self,
                  pull_secret: str,
-                 additional_ntp_sources: Optional[str] = None,
-                 additional_trust_bundle: Optional[str] = None,
-                 ignition_config_override: Optional[str] = None,
-                 image_type: Optional[str] = None,
-                 ssh_authorized_key: Optional[str] = None,
+                 additional_ntp_sources: str = None,
+                 additional_trust_bundle: str = None,
+                 ignition_config_override: str = None,
+                 image_type: str = None,
+                 ssh_authorized_key: str = None,
                  ):
         self.additional_ntp_sources = additional_ntp_sources
         self.additional_trust_bundle = additional_trust_bundle
@@ -198,7 +196,7 @@ class InfraEnvUpdateParams:
         }
     
 class HostCreateParams:
-    def __init__(self, host_id: str, discovery_agent_version: Optional[str] = None):
+    def __init__(self, host_id: str, discovery_agent_version: str = None):
         self.host_id = host_id
         self.discovery_agent_version = discovery_agent_version
 
