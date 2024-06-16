@@ -119,25 +119,25 @@ class assisted_installer:
 
     def post_cluster(self, name: str, openshift_version: str, pull_secret: str = os.environ.get("REDHAT_PULL_SECRET") if "REDHAT_PULL_SECRET" in os.environ else "",
                  additional_ntp_source: Optional[str] = None,
-                 api_vips: Optional[List[APIVip]] = None,
+                #  api_vips: Optional[List[APIVip]] = None,
                  base_dns_domain: Optional[str] = None,
                  cluster_network_cidr: Optional[str] = "10.128.0.0/14",
                  cluster_network_host_prefix: Optional[int] = 23,
-                 cluster_networks: Optional[List[ClusterNetwork]] = None,
+                #  cluster_networks: Optional[List[ClusterNetwork]] = None,
                  cpu_architecture: Optional[str] = "x86_64",
-                 disk_encryption: Optional[DiskEncryption] = None,
+                #  disk_encryption: Optional[DiskEncryption] = None,
                  high_availability_mode: Optional[str] = "Full",
                  http_proxy: Optional[str] = None,
                  https_proxy: Optional[str] = None,
                  hyperthreading: Optional[str] = "all",
-                 ignition_endpoint: Optional[IgnitionEndpoint] = None,
-                 ingress_vips: Optional[List[IngressVip]] = None,
-                 machine_networks: Optional[List[MachineNetwork]] = None,
+                #  ignition_endpoint: Optional[IgnitionEndpoint] = None,
+                #  ingress_vips: Optional[List[IngressVip]] = None,
+                #  machine_networks: Optional[List[MachineNetwork]] = None,
                  network_type: Optional[str] = None,
                  no_proxy: Optional[str] = None,
                  ocp_release_image: Optional[str] = None,
-                 olm_operators: Optional[List[OperatorCreateParams]] = None,
-                 platform: Optional[Platform] = None,
+                #  olm_operators: Optional[List[OperatorCreateParams]] = None,
+                #  platform: Optional[Platform] = None,
                  schedulable_masters: Optional[bool] = False,
                  service_network_cidr: Optional[str] = "172.30.0.0/16",
                  service_networks: Optional[List[Dict[str, Any]]] = None,
@@ -148,12 +148,11 @@ class assisted_installer:
         
         url = self.apiBase + "clusters"
 
-        cluster_create_params = ClusterCreateParams(name=name, openshift_version=openshift_version, pull_secret=pull_secret, additional_ntp_source=additional_ntp_source, api_vips=api_vips, 
+        cluster_create_params = ClusterCreateParams(name=name, openshift_version=openshift_version, pull_secret=pull_secret, additional_ntp_source=additional_ntp_source,
                                                     base_dns_domain=base_dns_domain, cluster_network_cidr=cluster_network_cidr, cluster_network_host_prefix=cluster_network_host_prefix, 
-                                                    cluster_networks=cluster_networks, cpu_architecture=cpu_architecture, disk_encryption=disk_encryption, high_availability_mode=high_availability_mode, 
-                                                    http_proxy=http_proxy, https_proxy=https_proxy, hyperthreading=hyperthreading, ignition_endpoint=ignition_endpoint, ingress_vips=ingress_vips, 
-                                                    machine_networks=machine_networks, network_type=network_type, no_proxy=no_proxy, ocp_release_image=ocp_release_image, olm_operators=olm_operators, 
-                                                    platform=platform, schedulable_masters=schedulable_masters, service_network_cidr=service_network_cidr,service_networks=service_networks, 
+                                                    cpu_architecture=cpu_architecture, high_availability_mode=high_availability_mode, 
+                                                    http_proxy=http_proxy, https_proxy=https_proxy, hyperthreading=hyperthreading, network_type=network_type, no_proxy=no_proxy, ocp_release_image=ocp_release_image,
+                                                    schedulable_masters=schedulable_masters, service_network_cidr=service_network_cidr,service_networks=service_networks, 
                                                     ssh_public_key=ssh_public_key, tags=tags, user_managed_networking=user_managed_networking, vip_dhcp_allocation=vip_dhcp_allocation)
         data = cluster_create_params.to_dict()
 
@@ -177,22 +176,22 @@ class assisted_installer:
     def patch_cluster(self, id: str, pull_secret: str =  os.environ.get("REDHAT_PULL_SECRET") if "REDHAT_PULL_SECRET" in os.environ else "",
                  additional_ntp_source: Optional[str] = None,
                  api_vip_dns_name: Optional[str] = None,
-                 api_vips: Optional[List[APIVip]] = None,
+                #  api_vips: Optional[List[APIVip]] = None,
                  base_dns_domain: Optional[str] = None,
                  cluster_network_cidr: Optional[str] = None,
                  cluster_network_host_prefix: Optional[int] = None,
                  cluster_networks: Optional[List[Dict[str, Any]]] = None,
-                 disk_encryption: Optional[DiskEncryption] = None,
+                #  disk_encryption: Optional[DiskEncryption] = None,
                  http_proxy: Optional[str] = None,
                  https_proxy: Optional[str] = None,
                  hyperthreading: Optional[str] = None,
                  ingress_vips: Optional[List[str]] = None,
-                 machine_networks: Optional[List[MachineNetwork]] = None,
+                #  machine_networks: Optional[List[MachineNetwork]] = None,
                  name: Optional[str] = None,
                  network_type: Optional[str] = None,
                  no_proxy: Optional[str] = None,
-                 olm_operators: Optional[List[OperatorCreateParams]] = None,
-                 platform: Optional[Platform] = None,
+                #  olm_operators: Optional[List[OperatorCreateParams]] = None,
+                #  platform: Optional[Platform] = None,
                  schedulable_masters: Optional[bool] = None,
                  service_network_cidr: Optional[str] = None,
                  service_networks: Optional[List[Dict[str, Any]]] = None,
@@ -203,10 +202,10 @@ class assisted_installer:
         
         url = self.apiBase + f"clusters/{id}"
 
-        update_cluster_params = ClusterUpdateParams(name=name, pull_secret=pull_secret, olm_operators=olm_operators, additional_ntp_source=additional_ntp_source, 
-                                                    api_vip_dns_name=api_vip_dns_name, api_vips=api_vips, base_dns_domain=base_dns_domain, cluster_network_cidr=cluster_network_cidr, 
-                                                    cluster_network_host_prefix=cluster_network_host_prefix, cluster_networks=cluster_networks, platform=platform, disk_encryption=disk_encryption, 
-                                                    http_proxy=http_proxy, https_proxy=https_proxy, hyperthreading=hyperthreading, ingress_vips=ingress_vips, machine_networks=machine_networks, 
+        update_cluster_params = ClusterUpdateParams(name=name, pull_secret=pull_secret, additional_ntp_source=additional_ntp_source, 
+                                                    api_vip_dns_name=api_vip_dns_name, base_dns_domain=base_dns_domain, cluster_network_cidr=cluster_network_cidr, 
+                                                    cluster_network_host_prefix=cluster_network_host_prefix, cluster_networks=cluster_networks,
+                                                    http_proxy=http_proxy, https_proxy=https_proxy, hyperthreading=hyperthreading, ingress_vips=ingress_vips,
                                                     network_type=network_type, no_proxy=no_proxy, schedulable_masters=schedulable_masters, service_network_cidr=service_network_cidr,service_networks=service_networks, 
                                                     ssh_public_key=ssh_public_key, tags=tags, user_managed_networking=user_managed_networking, vip_dhcp_allocation=vip_dhcp_allocation)
         
@@ -289,17 +288,18 @@ class assisted_installer:
                  additional_trust_bundle: Optional[str] = None,
                  ignition_config_override: Optional[str] = None,
                  image_type: Optional[str] = None,
-                 kernel_arguments: Optional[KernelArguments] = None,
+
                  proxy: Optional[Proxy] = None,
                  pull_secret: str = os.environ.get("REDHAT_PULL_SECRET") if "REDHAT_PULL_SECRET" in os.environ else "",
                  ssh_authorized_key: Optional[str] = None,
-                 static_network_config: Optional[List[HostStaticNetworkConfig]] = None):
+
+                 ):
         
         url = self.apiBase + f"infra-envs/{id}"
 
         update_cluster_params = InfraEnvUpdateParams(pull_secret=pull_secret, additional_ntp_sources=additional_ntp_sources, additional_trust_bundle=additional_trust_bundle, 
-                                                     ignition_config_override=ignition_config_override, image_type=image_type, kernel_arguments=kernel_arguments, proxy=proxy,
-                                                     ssh_authorized_key=ssh_authorized_key, static_network_config=static_network_config) 
+                                                     ignition_config_override=ignition_config_override, image_type=image_type, proxy=proxy,
+                                                     ssh_authorized_key=ssh_authorized_key) 
         data = update_cluster_params.to_dict()
 
         try:
@@ -325,19 +325,20 @@ class assisted_installer:
                  cluster_id: Optional[str] = None,
                  cpu_architecture: Optional[str] = "x86_64",
                  ignition_config_override: Optional[str] = None,
-                 image_type: Optional[ImageType] = None,
-                 kernel_arguments: Optional[KernelArguments] = None,
+                #  image_type: Optional[ImageType] = None,
+                #  kernel_arguments: Optional[KernelArguments] = None,
                  openshift_version: Optional[str] = None,
-                 proxy: Optional[Proxy] = None,
+                #  proxy: Optional[Proxy] = None,
                  ssh_authorized_key: Optional[str] = None,
-                 static_network_config: Optional[List[HostStaticNetworkConfig]] = None):
+                #  static_network_config: Optional[List[HostStaticNetworkConfig]] = None,
+                 ):
         
         url = self.apiBase + "infra-envs"
 
 
         infra_env_create_params = InfraEnvCreateParams(name=name, pull_secret=pull_secret, additional_ntp_sources=additional_ntp_sources, additional_trust_bundle=additional_trust_bundle, 
-                                                       cluster_id=cluster_id, cpu_architecture=cpu_architecture, ignition_config_override=ignition_config_override, image_type=image_type, 
-                                                       kernel_arguments=kernel_arguments, openshift_version=openshift_version,proxy=proxy, ssh_authorized_key=ssh_authorized_key, static_network_config=static_network_config)
+                                                       cluster_id=cluster_id, cpu_architecture=cpu_architecture, ignition_config_override=ignition_config_override, 
+                                                       openshift_version=openshift_version, ssh_authorized_key=ssh_authorized_key)
         
         data = infra_env_create_params.to_dict()
 
