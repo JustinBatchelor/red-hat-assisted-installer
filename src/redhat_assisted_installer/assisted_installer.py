@@ -15,6 +15,8 @@ from requests.exceptions import HTTPError
 
 import pprint
 
+DEBUG_MODE = False
+
 
 class assisted_installer:
     def __init__(self) -> None:
@@ -53,7 +55,8 @@ class assisted_installer:
             return access_token
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -63,11 +66,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers())
             response.raise_for_status()
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True)  
             return [response.json()]
         
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def get_default_config(self):
@@ -76,11 +81,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers())
             response.raise_for_status()
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return response.json()
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def get_clusters(self, with_hosts: bool=False, owner: str=None):
@@ -99,11 +106,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers())
             response.raise_for_status()
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return response.json()
             
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def post_cluster(self, cluster: ClusterParams):
@@ -123,11 +132,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers(), json=cluster_params)
             response.raise_for_status()    
             print("Successfully created cluster:")
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def patch_cluster(self, cluster: ClusterParams):
@@ -154,11 +165,13 @@ class assisted_installer:
             response = requests.patch(url, headers=self.__get_headers(), json=cluster_params)
             response.raise_for_status()
             print(f"Successfully patched cluster: {cluster_id}")
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def delete_cluster(self, cluster_id: str):
@@ -171,7 +184,8 @@ class assisted_installer:
             return True
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -181,11 +195,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers())
             response.raise_for_status()
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
             
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     # Method that will implement the /v2/infra-envs GET assisted installer endpoint
@@ -195,11 +211,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers())
             response.raise_for_status()
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return response.json()
             
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def patch_infrastructure_environment(self, infra_env: InfraEnv):
@@ -223,11 +241,13 @@ class assisted_installer:
             response = requests.patch(url, headers=self.__get_headers(), json=infra_params)
             response.raise_for_status()
             print(f"Successfully patched infra-env: {infra_env_id}")
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -248,11 +268,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers(), json=infra_env_params)
             response.raise_for_status()
             print("Successfully created infra-env:") 
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def delete_infrastructure_environment(self, infra_env_id: str):
@@ -265,7 +287,8 @@ class assisted_installer:
             return True
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -276,11 +299,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
             print(f"Successfully initiated action 'allow-add-hosts' for cluster: {cluster_id}")
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -291,11 +316,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
             print(f"Successfully initiated action 'allow-add-workers' for cluster: {cluster_id}")  
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def cluster_action_cancel(self, cluster_id: str):
@@ -305,11 +332,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
             print(f"Successfully canceled installation for cluster: {cluster_id}") 
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def cluster_action_complete_installation(self, cluster_id: str):
@@ -319,11 +348,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
             print(f"Successfully complete installation for cluster: {cluster_id}")      
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -334,11 +365,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
             print(f"Successfully reset cluster: {cluster_id}")
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -349,11 +382,13 @@ class assisted_installer:
             response = requests.post(url, headers=self.__get_headers())
             response.raise_for_status()
             print(f"Successfully initiated cluster install for cluster: {cluster_id}")
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
         
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def cluster_get_credentials(self, cluster_id: str, credentials: str = None):
@@ -366,16 +401,19 @@ class assisted_installer:
             if credentials is not None:
                 response = requests.get(url, headers=self.__get_headers(), params=query_string)
                 response.raise_for_status()
-                print(response.text)
+                if DEBUG_MODE:
+                    print(response.text)
                 return response.text
             else:
                 response = requests.get(url, headers=self.__get_headers())
                 response.raise_for_status()
-                pprint.pprint(response.json(), compact=True)
+                if DEBUG_MODE:
+                    pprint.pprint(response.json(), compact=True) 
                 return [response.json()]
         
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -387,11 +425,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers(), params=query_string)
             response.raise_for_status()
-            print(response.text)
+            if DEBUG_MODE:
+                print(response.text)
             return response.text
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
 
@@ -401,11 +441,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers())
             response.raise_for_status()
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return response.json()
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     def get_infrastructure_environement_host(self, infra_env_id: str, host_id: str):
@@ -413,11 +455,13 @@ class assisted_installer:
         try:
             response = requests.get(url, headers=self.__get_headers())
             response.raise_for_status()
-            pprint.pprint(response.json(), compact=True)
+            if DEBUG_MODE:
+                pprint.pprint(response.json(), compact=True) 
             return [response.json()]
 
         except Exception as e:
-            print(e)
+            if DEBUG_MODE:
+                print(e)
             return [response.json()]
 
     # def post_infrastructure_environement_host(self, infra_env_id: str, host_id: str, discovery_agent_version: str = None):
