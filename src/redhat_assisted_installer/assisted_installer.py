@@ -11,7 +11,7 @@ from .lib.schema.infra_env import *
 
 from .lib.utils import *
 
-from requests.exceptions import HTTPError
+from requests import Response
 
 import pprint
 
@@ -52,7 +52,7 @@ class assisted_installer:
         return access_token
 
 
-    def get_cluster(self, cluster_id: str=None) -> requests:
+    def get_cluster(self, cluster_id: str=None) -> Response:
         url = self.apiBase + f"clusters/{cluster_id}"
 
         response = requests.get(url, headers=self.__get_headers())
@@ -60,7 +60,7 @@ class assisted_installer:
             pprint.pprint(response.json(), compact=True)  
         return response   
 
-    def get_default_config(self):
+    def get_default_config(self) -> Response:
         url = self.apiBase + f"clusters/default-config"
 
         response = requests.get(url, headers=self.__get_headers())
@@ -68,7 +68,7 @@ class assisted_installer:
             pprint.pprint(response.json(), compact=True) 
         return response
 
-    def get_clusters(self, with_hosts: bool=False, owner: str=None) -> requests:
+    def get_clusters(self, with_hosts: bool=False, owner: str=None) -> Response:
         url = self.apiBase + "clusters"
 
         if with_hosts:
@@ -84,9 +84,9 @@ class assisted_installer:
         response = requests.get(url, headers=self.__get_headers())
         if DEBUG_MODE:
             pprint.pprint(response.json(), compact=True) 
-        return response.json()
+        return response
     
-    def post_cluster(self, cluster: ClusterParams) -> requests:
+    def post_cluster(self, cluster: ClusterParams) -> Response:
         VALID_POST_PARAMS = [
             "additional_ntp_source","api_vips","base_dns_domain","cluster_network_cidr","cluster_network_host_prefix",
             "cluster_networks","cpu_architecture","disk_encryption","high_availability_mode","http_proxy","https_proxy",
@@ -104,7 +104,7 @@ class assisted_installer:
             pprint.pprint(response.json(), compact=True) 
         return response
 
-    def patch_cluster(self, cluster: ClusterParams) -> requests:
+    def patch_cluster(self, cluster: ClusterParams) -> Response:
         VALID_PATCH_PARAMS = [
             "additional_ntp_source","api_vip_dns_name","api_vips","base_dns_domain","cluster_network_cidr",
             "cluster_network_host_prefix","cluster_networks","disk_encryption","http_proxy","https_proxy","hyperthreading",
@@ -118,7 +118,10 @@ class assisted_installer:
         cluster_id = cluster_params.pop("cluster_id", None)
 
         if cluster_id is None:
-            return [{"code": 404, "status": "Failed", "reason": "Cluster Id is requried to preform the patch operation"}]
+            response = requests.Response()
+            response._content = b'{"message": "cluster_id is requried to preform the patch operation"}'
+            response.status_code = 404
+            return response
         
         cluster_params = filter_dict_by_keys(cluster_params, VALID_PATCH_PARAMS)
         
@@ -134,7 +137,7 @@ class assisted_installer:
         response = requests.delete(url, headers=self.__get_headers())
         return True if (response.status_code == 204) else False
 
-    def get_infrastructure_environement(self, infra_env_id: str) -> requests:
+    def get_infrastructure_environement(self, infra_env_id: str) -> Response:
         url = self.apiBase + f"infra-envs/{infra_env_id}"
 
         response = requests.get(url, headers=self.__get_headers())
@@ -143,7 +146,7 @@ class assisted_installer:
         return response
 
     # Method that will implement the /v2/infra-envs GET assisted installer endpoint
-    def get_infrastructure_environements(self) -> requests:
+    def get_infrastructure_environements(self) -> Response:
         url = self.apiBase + "infra-envs"
         
         response = requests.get(url, headers=self.__get_headers())
@@ -151,7 +154,7 @@ class assisted_installer:
             pprint.pprint(response.json(), compact=True) 
         return response.json()
         
-    def patch_infrastructure_environment(self, infra_env: InfraEnv) -> requests:
+    def patch_infrastructure_environment(self, infra_env: InfraEnv) -> Response:
         VALID_PATCH_PARAMS =  [
             "additional_ntp_sources","additional_trust_bundle","ignition_config_override","image_type",
             "kernel_arguments","proxy","pull_secret","ssh_authorized_key","static_network_config",
@@ -162,7 +165,10 @@ class assisted_installer:
         infra_env_id = infra_params.pop("infra_env_id", None)
 
         if infra_env_id is None:
-            return [{"code": 404, "status": "Failed", "reason": "infra_env_id is requried to preform the patch operation"}]
+            response = requests.Response()
+            response._content = b'{"message": "infra_env_id is requried to preform the patch operation"}'
+            response.status_code = 404
+            return response
         
         infra_params = filter_dict_by_keys(infra_params, VALID_PATCH_PARAMS)
         
@@ -173,7 +179,7 @@ class assisted_installer:
             pprint.pprint(response.json(), compact=True) 
         return response
 
-    def post_infrastructure_environment(self, infra_env: InfraEnv) -> requests:
+    def post_infrastructure_environment(self, infra_env: InfraEnv) -> Response:
         VALID_POST_PARAMS = [
             "additional_ntp_sources","additional_trust_bundle","cluster_id","cpu_architecture",
             "ignition_config_override","image_type","kernel_arguments","name","openshift_version",
@@ -273,7 +279,7 @@ class assisted_installer:
             print(response.text)
         return response
 
-    def get_infrastructure_environement_hosts(self, infra_env_id: str) -> requests:
+    def get_infrastructure_environement_hosts(self, infra_env_id: str) -> Response:
         url = self.apiBase + f"infra-envs/{infra_env_id}/hosts"
 
         response = requests.get(url, headers=self.__get_headers())
@@ -281,7 +287,7 @@ class assisted_installer:
             pprint.pprint(response.json(), compact=True) 
         return response
 
-    def get_infrastructure_environement_host(self, infra_env_id: str, host_id: str) -> requests:
+    def get_infrastructure_environement_host(self, infra_env_id: str, host_id: str) -> Response:
         url = self.apiBase + f"infra-envs/{infra_env_id}/hosts/{host_id}"
 
         response = requests.get(url, headers=self.__get_headers())

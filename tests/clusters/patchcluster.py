@@ -13,7 +13,6 @@ installer = assisted_installer.assisted_installer()
 
 try:
     cluster_params = ClusterParams(
-        cluster_id="6e6b2c48-e507-4a5e-8cc2-17aaac78ce9b",
         name="pypi-testing",
         openshift_version="4.15",
         cpu_architecture="None",
@@ -23,6 +22,7 @@ try:
     )
 
     cluster = installer.patch_cluster(cluster=cluster_params)
+    print(cluster)
 
 except HTTPError as e:
     print("bad response code")
