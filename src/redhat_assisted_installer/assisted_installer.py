@@ -15,7 +15,7 @@ from requests import Response
 
 import pprint
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 
 class assisted_installer:
