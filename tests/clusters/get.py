@@ -13,7 +13,7 @@ try:
     id = input("Please enter the cluster id you want to get (leave blank to get all): ")
     if id == "":
         cluster = installer.get_clusters()
-        print(len(cluster))
+        print(len(cluster.json()))
     else:
         cluster = installer.get_cluster(cluster_id=id)
         

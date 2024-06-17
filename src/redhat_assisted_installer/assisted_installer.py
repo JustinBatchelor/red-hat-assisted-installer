@@ -15,7 +15,7 @@ from requests import Response
 
 import pprint
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 
 class assisted_installer:
@@ -152,7 +152,7 @@ class assisted_installer:
         response = requests.get(url, headers=self.__get_headers())
         if DEBUG_MODE:
             pprint.pprint(response.json(), compact=True) 
-        return response.json()
+        return response
         
     def patch_infrastructure_environment(self, infra_env: InfraEnv) -> Response:
         VALID_PATCH_PARAMS =  [
