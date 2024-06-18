@@ -1,6 +1,8 @@
 import os
 
 from ..utils import *
+from .schema import APIObject
+
 """
 {
   "additional_ntp_source": {
@@ -293,90 +295,290 @@ from ..utils import *
 }
 
 """
-class ClusterParams:
-    def __init__(self, 
-                 name: str = None, 
-                 openshift_version: str = None,
-                 cluster_id: str = None, 
-                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
-                 additional_ntp_source: str = None,
-                 api_vip: str = None,
-                 base_dns_domain: str = None,
-                 cluster_network_cidr: str = None,
-                 cluster_network_host_prefix: int = None,
-                 cpu_architecture: str = None,
-                 high_availability_mode: str = None,
-                 http_proxy: str = None,
-                 https_proxy: str = None,
-                 hyperthreading: str = None,
-                 ingress_vip: str = None,
-                 network_type: str = None,
-                 service_network_cidr: str = None,
-                 user_managed_networking: bool = None,
-                 ssh_authorized_key: str = None,
-                 vip_dhcp_allocation: bool = None,
-                ):
-        self.params = {}
-
-        if name is not None:
-            self.params['name'] = name
-
-        if openshift_version is not None and is_valid_openshift_version(openshift_version):
-            self.params['openshift_version'] = openshift_version
+class APIVIP(APIObject):
+    def __init__(self,
+                 cluster_id: str = None,
+                 ip: str = None,
+                 verification: str = None,
+                 ) -> None:
+        
+        super().__init__()
 
         if cluster_id is not None:
             self.params['cluster_id'] = cluster_id
 
+        if ip is not None:
+            self.params['ip'] = ip
+        
+        if verification is not None:
+            self.params['verification'] = verification
+
+class ClusterNetworks(APIObject):
+    def __init__(self,
+                 cidr: str = None,
+                 cluster_id: str = None,
+                 host_prefix: int = None,
+                 ) -> None:
+        super().__init__()
+        
+        if cidr is not None:
+            self.params['cidr'] = cidr
+
+        if cluster_id is not None:
+            self.params["cluster_id"] = cluster_id
+
+        if host_prefix is not None:
+            self.params['host_prefix'] = host_prefix
+
+
+class DiskEncryption(APIObject):
+    def __init__(self,
+                 enable_on: str = None,
+                 mode: str = None,
+                 tang_server: str = None,
+                 ) -> None:
+        super().__init__()
+
+        if enable_on is not None:
+            self.params['enable_on'] = enable_on
+
+        if mode is not None:
+            self.params['mode'] = mode
+
+        if tang_server is not None:
+            self.params['tang_servers'] = tang_server
+
+class IgnitionEndpoint(APIObject):
+    def __init__(self,
+                 ca_certificate: str = None,
+                 url: str = None,
+                 ) -> None:
+        super().__init__()
+
+        if ca_certificate is not None:
+            self.params["ca_certificate"] = ca_certificate
+
+        if url is not None:
+            self.params["url"] = url
+
+
+class IngressVIP(APIObject):
+    def __init__(self,
+                 cluster_id: str = None,
+                 ip: str = None,
+                 verification: str = None,
+                 ) -> None:
+        super().__init__()
+        
+        if cluster_id is not None:
+            self.params['cluster_id'] = cluster_id
+
+        if ip is not None:
+            self.params['ip'] = ip
+
+        if verification is not None:
+            self.params['verification'] = verification
+
+class MachineNetwork(APIObject):
+    def __init__(self,
+                 cidr: str = None,
+                 cluster_id: str = None,
+                 ) -> None:
+        super().__init__()
+
+        if cidr is not None:
+            self.params['cidr'] = cidr
+
+        if cluster_id is not None:
+            self.params['cluster_id'] = cluster_id
+
+class OLMOperator(APIObject):
+    def __init__(self,
+                 name: str = None,
+                 properties: str = None,
+                 ) -> None:
+        super().__init__()
+
+        if name is not None:
+            self.params['name'] = name
+
+        if properties is not None:
+            self.params['properties'] = properties
+
+class PlatformExternal(APIObject):
+    def __init__(self,
+                 cloud_controller_manager: str = None,
+                 platform_name: str = None,
+                 ) -> None:
+        super().__init__()
+
+        if cloud_controller_manager is not None:
+            self.params['cloud_controller_manager'] = cloud_controller_manager
+
+        if platform_name is not None:
+            self.params['platform_name'] = platform_name
+
+class Platform(APIObject):
+    def __init__(self,
+                 external: PlatformExternal = None,
+                 type: str = None,
+                 ) -> None:
+        super().__init__()
+
+        if external is not None:
+            self.params['external'] = external.create_params()
+
+        if type is not None:
+            self.params['type'] = type
+
+class ServiceNetwork(APIObject):
+    def __init__(self,
+                 cidr: str = None,
+                 cluster_id: str = None, 
+                ) -> None:
+        super().__init__()
+
+        if cidr is not None:
+            self.params['cidr'] = cidr
+        
+        if cluster_id is not None:
+            self.params['cluster_id'] = cluster_id
+
+class Cluster(APIObject):
+    def __init__(self, 
+                 additional_ntp_source: str = None,
+                 api_vips: list[APIVIP] = None,
+                 base_dns_domain: str = None,
+                 cluster_networks: list[ClusterNetworks] = None,
+                 cpu_architecture: str = None,
+                 disk_encryption: DiskEncryption = None,     
+                 high_availability_mode: str = None,
+                 http_proxy: str = None,
+                 https_proxy: str = None,
+                 hyperthreading: str = None,
+                 ignition_endpoint: IgnitionEndpoint = None,
+                 ingress_vips: list[IngressVIP] = None,
+                 machine_networks: list[MachineNetwork] = None,
+                 name: str = None, 
+                 network_type: str = None,
+                 no_proxy: str = None,
+                 ocp_release_image: str = None,
+                 olm_operator: list[OLMOperator] = None,
+                 openshift_version: str = None,
+                 platform: Platform = None,
+                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
+                 schedulable_masters: bool = None,
+                 service_networks: list[ServiceNetwork] = None,
+                 ssh_public_key: str = None,
+                 tags: str = None,
+                 user_managed_networking: bool = None,
+                 vip_dhcp_allocation: bool = None,
+                 cluster_id: str = None, 
+                ):
+        super().__init__()
+
+        if additional_ntp_source is not None:
+            self.params['additional_ntp_source'] = additional_ntp_source
+
+        if api_vips is not None:
+            vips = []
+            for api_vip in api_vips:
+                vips.append(api_vip.create_params())
+            self.params['api_vips'] = vips
+
+        if base_dns_domain is not None:
+            self.params['base_dns_domain'] = base_dns_domain
+
+        if cluster_id is not None:
+            self.params['cluster_id'] = cluster_id
+
+        if cluster_networks is not None:
+            networks = []
+            for network in cluster_networks:
+                networks.append(network.create_params())
+            self.params['cluster_networks'] = networks
+
+        if cpu_architecture is not None:
+            self.params['cpu_architecture'] = cpu_architecture
+
+        if disk_encryption is not None:
+            self.params['disk_encryption'] = disk_encryption.create_params()
+
+        if high_availability_mode is not None:
+            self.params['high_availability_mode'] = high_availability_mode
+
+        if http_proxy is not None:
+            self.params['http_proxy'] = http_proxy
+
+        if https_proxy is not None:
+            self.params['https_proxy'] = https_proxy
+
+        if hyperthreading is not None:
+            self.params['hyperthreading'] = hyperthreading
+
+        if ignition_endpoint is not None:
+            self.params['ignition_endpoint'] = ignition_endpoint
+
+        if ingress_vips is not None:
+            vips = []
+            for vip in ingress_vips:
+                vips.append(vip.create_params())
+            self.params['ingress_vips'] = vips
+
+        if machine_networks is not None:
+            networks = []
+            for network in machine_networks:
+                networks.append(network.create_params())
+            self.params['machine_networks'] = networks
+
+        if name is not None:
+            self.params['name'] = name
+
+        if network_type is not None:
+            self.params['network_type'] = network_type
+
+        if no_proxy is not None:
+            self.params['no_proxy'] = no_proxy
+        
+        if ocp_release_image is not None:
+            self.params['ocp_release_image'] = ocp_release_image
+
+        if olm_operator is not None:
+            operators = []
+            for operator in olm_operator:
+                operators.append(operator.create_params())
+            self.params['olm_operator'] = operators
+
+        if openshift_version is not None:
+            self.params['openshift_version'] = openshift_version
+
+        if platform is not None:
+            self.params['platform'] = platform.create_params()
+
         if pull_secret is not None:
             self.params['pull_secret'] = pull_secret
 
-        if additional_ntp_source is not None and is_valid_ip(additional_ntp_source):
-            self.params['additional_ntp_source'] = additional_ntp_source
+        if schedulable_masters is not None: 
+            self.params['schedulable_masters'] = schedulable_masters
 
-        if api_vip is not None and is_valid_ip(api_vip):
-            self.params['api_vip'] = api_vip
+        if service_networks is not None:
+            networks = []
+            for network in service_networks:
+                networks.append(network.create_params())
+            self.params['service_networks'] = networks
 
-        if base_dns_domain is not None and is_valid_base_domain(base_dns_domain):
-            self.params['base_dns_domain'] = base_dns_domain
+        if ssh_public_key is not None:
+            self.params['ssh_public_key'] = ssh_public_key
 
-        if cluster_network_cidr is not None and is_valid_cidr(cluster_network_cidr):
-            self.params['cluster_network_cidr'] = cluster_network_cidr
-
-        if cluster_network_host_prefix is not None and isinstance(cluster_network_host_prefix, int) and cluster_network_host_prefix > 0 and cluster_network_host_prefix < 128:
-            self.params['cluster_network_host_prefix'] = cluster_network_host_prefix
-
-        if cpu_architecture is not None and is_valid_cpu_architecture(cpu_architecture):
-            self.params['cpu_architecture'] = cpu_architecture
-
-        if high_availability_mode is not None and is_valid_ha_mode(high_availability_mode):
-            self.params['high_availability_mode'] = high_availability_mode
-
-        if http_proxy is not None and is_valid_ip(http_proxy):
-            self.params['http_proxy'] = http_proxy
-
-        if https_proxy is not None and is_valid_ip(https_proxy):
-            self.params['https_proxy'] = https_proxy
-
-        if hyperthreading is not None and is_valid_hyperthread(hyperthreading):
-            self.params['hyperthreading'] = hyperthreading
-
-        if ingress_vip is not None and is_valid_ip(ingress_vip):
-            self.params['ingress_vip'] = ingress_vip
-
-        if network_type is not None and is_valid_network_type(network_type):
-            self.params['network_type'] = network_type
-
-        if service_network_cidr is not None and is_valid_cidr(service_network_cidr):
-            self.params['service_network_cidr'] = service_network_cidr
-
-        if ssh_authorized_key is not None:
-            self.params['ssh_authorized_key'] = ssh_authorized_key
+        if tags is not None:
+            self.params['tags'] = tags
 
         if user_managed_networking is not None:
             self.params['user_managed_networking'] = user_managed_networking
 
         if vip_dhcp_allocation is not None:
             self.params['vip_dhcp_allocation'] = vip_dhcp_allocation
+
 
     def create_params(self):
         return {key: value for key, value in self.params.items() if value is not None}

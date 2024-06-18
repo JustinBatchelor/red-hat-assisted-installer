@@ -15,9 +15,9 @@ from redhat_assisted_installer.lib.schema.infra_env import *
 
 import pprint
 
-mac_interface_map = MacInterfaceMap(logical_nic_name="log-nic-0",
-                                    mac_address="00:1b:63:84:45:e6",
-                                    )
+mac_interface_map = [MacInterfaceMap(logical_nic_name="log-nic-0",
+                                     mac_address="00:1b:63:84:45:e6",
+                                    )]
 
 yaml_data = """
 interfaces:
@@ -58,19 +58,23 @@ routes:
       table-id: 254
 """
 
-static_network_config = StaticNetworkConfig(mac_interface_map=mac_interface_map,
-                                            network_yaml=yaml_data,)
+static_network_config = [StaticNetworkConfig(mac_interface_map=mac_interface_map,
+                                            network_yaml=yaml_data,)]
 
 proxy = Proxy(http_proxy="http://test:test@192.168.5.1:80",
               https_proxy="http://test:test@192.168.6.1:443",
-              no_proxy="192.168.7.1",)
+              no_proxy="192.168.7.1")
 
-kernel_args = KernelArguments(operation="append",
-                              value="""
-                              rd.net.timeout.carrier=60
-                              isolcpus=1,2,10-20,100-2000:2/25
-                              quiet"""
-                              )
+val = """
+rd.net.timeout.carrier=60
+isolcpus=1,2,10-20,100-2000:2/25
+quiet
+"""
+
+kernel_args = [KernelArguments(operation="append",
+                              value=val
+                              )]
+
 
 infra_env = InfraEnv(additional_ntp_source="",
                      additional_trust_bundle="",
@@ -81,7 +85,6 @@ infra_env = InfraEnv(additional_ntp_source="",
                      name="pypi-testing",
                      openshift_version="4.15",
                      proxy=proxy,
-                     ssh_authorized_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDmgMs56/R1+rye4xsmPGn31vBlR/V0wtj/qIJhndEtyczpbbMTS3ZaIjZLHpj0x+kQAUyL11JN4aBeMuYhEp/WS/IARKdkDhAF8XpkgeAe+Ci+f9OwaHmAGnzDE4VOM+EiuOVE1rLQF4+ug5vHBzd4MQum1a03IdJ8yRSa+2EsrIt9VKiEQkqEPfXcMr5VzbFXf0f+nPzrjgU1XjRIXNqROHfibm2BMjFOiKZVPkycPmyjiRJU4HQ342sYEiz9tiJpEVAMJ+F/SaOr8eDXKvv4NhVCvRLZ7QWn1MFqqzfkr+0XBXFQSxNFufkx/pRtbYb6s0qN8ZoYt8jYnt3sxpe1dEQhhCROly9mFhZHS4Lpo6C1h3MF3W9Ad8b1iBVpnVk+u7E2fCN2YlR0tbg8OJ19X0b6nh3Z55S9enDDkID5wmzgKtvDuwpDCq2g8Uo9gESI8OZ51C9v9lGQBHT1Xc5yw2v8qr50wsrf/0AYNQT1WP/FvTMirQAYDMEnsSVRJ6M= jbatchel@jb-pc",
                      static_network_config=static_network_config,
                      )
 

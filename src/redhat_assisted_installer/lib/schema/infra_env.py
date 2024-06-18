@@ -1,6 +1,8 @@
 import os
 
 from ..utils import *
+from .schema import APIObject
+
 
 """
 {
@@ -122,13 +124,13 @@ from ..utils import *
 """
 
 
-class Proxy:
+class Proxy(APIObject):
     def __init__(self, 
                  http_proxy: str = None,
                  https_proxy: str = None,
                  no_proxy: str = None,
                  ) -> None:
-        self.params = {}
+        super().__init__()
 
         if http_proxy is not None:
             self.params['http_proxy'] = http_proxy
@@ -138,17 +140,14 @@ class Proxy:
 
         if no_proxy is not None:
             self.params['no_proxy'] = no_proxy
-
-    def create_params(self):
-        return {key: value for key, value in self.params.items() if value is not None}
         
-class MacInterfaceMap:
+class MacInterfaceMap(APIObject):
     def __init__(self,
                  logical_nic_name: str = None,
                  mac_address: str = None,
                  ) -> None:
         
-        self.params = {}
+        super().__init__()
 
         if logical_nic_name is not None:
             self.params['logical_nic_name'] = logical_nic_name
@@ -156,45 +155,39 @@ class MacInterfaceMap:
         if mac_address is not None:
             self.params['mac_address'] = mac_address
 
-    def create_params(self):
-        return [{key: value for key, value in self.params.items() if value is not None}]
-        
-
-class StaticNetworkConfig:
+class StaticNetworkConfig(APIObject):
     def __init__(self, 
-                 mac_interface_map: MacInterfaceMap = None,
+                 mac_interface_map: list[MacInterfaceMap] = None,
                  network_yaml: str = None,
                  ) -> None:
-        self.params = {}
+        
+        super().__init__()
 
         if mac_interface_map is not None:
-            self.params['mac_interface_map'] = mac_interface_map.create_params()
+            maps = []
+            for interface_map in mac_interface_map:
+                maps.append(interface_map.create_params())
+            self.params['mac_interface_map'] = maps
 
         if network_yaml is not None:
-            self.params['network_yaml'] = network_yaml
+            self.params['network_yaml'] = network_yaml    
 
-    def create_params(self):
-        return [{key: value for key, value in self.params.items() if value is not None}]
-    
-
-class KernelArguments:
+class KernelArguments(APIObject):
     def __init__(self, 
                  operation: str = None,
                  value: str = None,
                  ) -> None:
-        self.params = {}
+        
+        super().__init__()
 
-        if operation is not None and is_valid_kernel_operation(operation):
+        if operation is not None:
             self.params['operation'] = operation
 
-        if value is not None and is_valid_kernel_value(value):
+        if value is not None:
             self.params['value'] = value
-
-    def create_params(self):
-        return [{key: value for key, value in self.params.items() if value is not None}]
     
 
-class InfraEnv:
+class InfraEnv(APIObject):
     def __init__(self,
                  infra_env_id: str = None,
                  additional_ntp_source: str = None, 
@@ -203,15 +196,16 @@ class InfraEnv:
                  cpu_architecture: str = None,
                  ignition_config_override: str = None,
                  image_type: str = None,
-                 kernel_arguments: KernelArguments = None,
+                 kernel_arguments: list[KernelArguments] = None,
                  name: str = None,
                  openshift_version: str = None,
                  proxy: Proxy = None,
                  pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
                  ssh_authorized_key: str = None,
-                 static_network_config: StaticNetworkConfig = None,
+                 static_network_config: list[StaticNetworkConfig] = None,
                  ):
-        self.params = {}
+        
+        super().__init__()
 
         if name is not None:
             self.params['name'] = name
@@ -219,7 +213,7 @@ class InfraEnv:
         if infra_env_id is not None:
             self.params['infra_env_id'] = infra_env_id
 
-        if openshift_version is not None and is_valid_openshift_version(openshift_version):
+        if openshift_version is not None:
             self.params['openshift_version'] = openshift_version
 
         if cluster_id is not None:
@@ -228,7 +222,7 @@ class InfraEnv:
         if pull_secret is not None:
             self.params['pull_secret'] = pull_secret
 
-        if additional_ntp_source is not None and is_valid_ip(additional_ntp_source):
+        if additional_ntp_source is not None:
             self.params['additional_ntp_source'] = additional_ntp_source
 
         if additional_trust_bundle is not None:
@@ -237,17 +231,23 @@ class InfraEnv:
         if image_type is not None and (image_type):
             self.params['image_type'] = image_type
 
-        if cpu_architecture is not None and is_valid_cpu_architecture(cpu_architecture):
+        if cpu_architecture is not None:
             self.params['cpu_architecture'] = cpu_architecture
 
         if ssh_authorized_key is not None :
             self.params['ssh_authorized_key'] = ssh_authorized_key
 
         if kernel_arguments is not None:
-            self.params['kernel_arguments'] = kernel_arguments.create_params()
+            arguments = []
+            for kernel in kernel_arguments:  
+              arguments.append(kernel.create_params())
+            self.params['kernel_arguments'] = arguments
 
         if static_network_config is not None:
-            self.params['static_network_config'] = static_network_config.create_params()
+            network_configs = []
+            for config in static_network_config:
+                network_configs.append(config.create_params())
+            self.params['static_network_config'] = network_configs
 
         if proxy is not None:
             self.params['proxy'] = proxy.create_params()
@@ -255,7 +255,4 @@ class InfraEnv:
         if ignition_config_override is not None:
             self.params["ignition_config_override"] = ignition_config_override
 
-
-    def create_params(self):
-        return {key: value for key, value in self.params.items() if value is not None}
     

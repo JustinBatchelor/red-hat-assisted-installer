@@ -78,13 +78,13 @@ def get_clusters(with_hosts: bool=False, owner: str=None) -> Response:
  
     return response
 
-def post_cluster(cluster: ClusterParams) -> Response:
+def post_cluster(cluster: Cluster) -> Response:
     VALID_POST_PARAMS = [
-        "additional_ntp_source","api_vips","base_dns_domain","cluster_network_cidr","cluster_network_host_prefix",
-        "cluster_networks","cpu_architecture","disk_encryption","high_availability_mode","http_proxy","https_proxy",
-        "hyperthreading","ignition_endpoint","ingress_vips","machine_networks","name","network_type","no_proxy",
-        "ocp_release_image","olm_operators","openshift_version","platform","pull_secret","schedulable_masters",
-        "service_network_cidr","service_networks","ssh_public_key","tags","user_managed_networking","vip_dhcp_allocation",
+        "additional_ntp_source","api_vips","base_dns_domain","cluster_networks","cpu_architecture","disk_encryption",
+        "high_availability_mode","http_proxy","https_proxy","hyperthreading","ignition_endpoint","ingress_vips",
+        "machine_networks","name","network_type","no_proxy","ocp_release_image","olm_operators","openshift_version",
+        "platform","pull_secret","schedulable_masters","service_network_cidr","service_networks","ssh_public_key",
+        "tags","user_managed_networking","vip_dhcp_allocation",
         ]
     
     url = API_BASE + "clusters"
@@ -95,9 +95,9 @@ def post_cluster(cluster: ClusterParams) -> Response:
  
     return response
 
-def patch_cluster(cluster: ClusterParams) -> Response:
+def patch_cluster(cluster: Cluster) -> Response:
     VALID_PATCH_PARAMS = [
-        "additional_ntp_source","api_vip_dns_name","api_vips","base_dns_domain","cluster_network_cidr",
+        "additional_ntp_source","api_vips","base_dns_domain","cluster_network_cidr",
         "cluster_network_host_prefix","cluster_networks","disk_encryption","http_proxy","https_proxy","hyperthreading",
         "ignition_endpoint","ingress_vips","machine_network_cidr","machine_networks","name","network_type","no_proxy",
         "olm_operators","platform","pull_secret","schedulable_masters","service_network_cidr","service_networks",

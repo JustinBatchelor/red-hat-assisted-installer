@@ -14,38 +14,43 @@ def filter_dict_by_keys(data, valid_keys):
     return {key: value for key, value in data.items() if key in valid_keys}
 
 
-def is_valid_cidr(cidr):
+def is_valid_http_proxy(proxy: str) -> bool:
     """
-    Validate if the given string is a valid CIDR notation.
+    Validates if the given string is a valid HTTP proxy.
 
-    Parameters:
-    cidr (str): The CIDR notation to validate.
+    Args:
+        proxy (str): The string to be validated.
 
     Returns:
-    bool: True if valid, False otherwise.
+        bool: True if the string matches the HTTP proxy pattern, False otherwise.
     """
-    # Regular expression to match valid IPv4 addresses and prefix lengths
-    cidr_regex = re.compile(
-        r'^(([0-9]{1,3}\.){3}[0-9]{1,3})/([0-9]|[1-2][0-9]|3[0-2])$'
-    )
-    match = cidr_regex.match(cidr)
+    pattern = r'^http:\/\/(?:[a-zA-Z0-9\-_]+(?:\:[a-zA-Z0-9\-_]+)?@)?[a-zA-Z0-9\.\-]+(?:\:[0-9]{1,5})?$'
     
-    if not match:
-        return False
-    # Validate each octet of the IP address
-    ip_parts = match.group(1).split('.')
-    for part in ip_parts:
-        if not 0 <= int(part) <= 255:
-            return False
+    return bool(re.match(pattern, proxy))
 
-    return True
 
-def is_valid_kernel_value(kernel_value):
+def is_valid_cidr(ip_address: str) -> bool:
+    """
+    Validates if the given string is a valid IPv4 or IPv6 address with a subnet mask using a regular expression.
+
+    Args:
+        ip_address (str): The string to be validated.
+
+    Returns:
+        bool: True if the string matches the IPv4 or IPv6 pattern with subnet mask, False otherwise.
+    """
+    # Regular expression pattern to match either an IPv4 or IPv6 address with subnet mask
+    pattern = r'^(?:(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3}\/(?:(?:[0-9])|(?:[1-2][0-9])|(?:3[0-2])))|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,})/(?:(?:[0-9])|(?:[1-9][0-9])|(?:1[0-1][0-9])|(?:12[0-8])))$'
+    
+    # Return the result of the match as a boolean
+    return bool(re.match(pattern, ip_address))
+
+def is_valid_kernel_value(kernel_value) -> bool:
     pattern = r'^(?:(?:[^\s\t\n\r"]+)|(?:"[^"]*"))+$'
     return bool(re.match(pattern, kernel_value))
 
     
-def is_valid_openshift_version(version):
+def is_valid_openshift_version(version) -> bool:
     """
     Validate if the given value is a valid OpenShift version.
 
@@ -59,24 +64,24 @@ def is_valid_openshift_version(version):
     return bool(pattern.match(version))
 
     
-def is_valid_ip(ip):
+def is_valid_ip(ip_address: str) -> bool:
     """
-    Validate if the given string is a valid IP address (IPv4 or IPv6).
+    Validates if the given string is a valid IPv4 or IPv6 address using a regular expression.
 
-    Parameters:
-    ip (str): The IP address to validate.
+    Args:
+        ip_address (str): The string to be validated.
 
     Returns:
-    bool: True if valid, False otherwise.
+        bool: True if the string matches the IPv4 or IPv6 pattern, False otherwise.
     """
-    try:
-        ipaddress.ip_address(ip)
-        return True
-    except ValueError:
-        return False
+    # Regular expression pattern to match either an IPv4 or IPv6 address
+    pattern = r'^(?:(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3})|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,}))?$'
+    
+    # Return the result of the match as a boolean
+    return bool(re.match(pattern, ip_address))
 
 
-def is_valid_base_domain(domain):
+def is_valid_base_domain(domain) -> bool:
     """
     Validate if the given string is a valid base domain (e.g., example.com).
 
@@ -92,23 +97,42 @@ def is_valid_base_domain(domain):
     )
     return bool(pattern.match(domain))
 
-def is_valid_cpu_architecture(cpu_architecture):
+def is_valid_cpu_architecture(cpu_architecture) -> bool:
     VALID_VALUES = ["x86_64", "aarch64", "arm64", "ppc64le", "s390x", "multi"]
     return cpu_architecture in VALID_VALUES
 
-def is_valid_ha_mode(ha_mode):
+def is_valid_ha_mode(ha_mode) -> bool:
     VALID_VALUES = ["None", "Full"]
     return ha_mode in VALID_VALUES
 
-def is_valid_hyperthread(hyperthreading):
+def is_valid_hyperthread(hyperthreading) -> bool:
     VALID_VALUES = ["masters", "workers", "none", "all"]
     return hyperthreading in VALID_VALUES
 
-def is_valid_network_type(network_type):
+def is_valid_network_type(network_type) -> bool:
     VALID_VALUES = ["OpenShiftSDN", "OVNKubernetes"]
     return network_type in VALID_VALUES
 
-def is_valid_kernel_operation(kernel_operation):
+def is_valid_kernel_operation(kernel_operation) -> bool:
     VALID_VALUES = ["append", "replace", "delete"]
     return kernel_operation in VALID_VALUES
 
+def is_valid_enable_on(enable_on) -> bool:
+    VALID_VALUES = ["none", "all", "masters", "workers"]
+    return enable_on in VALID_VALUES
+
+def is_valid_mode(mode) -> bool:
+    VALID_VALUES = ["tang", "tpmv2"]
+    return mode in VALID_VALUES
+
+def is_valid_verification(verification: str) -> bool:
+    VALID_VALUES = ["unverified", "failed", "succeeded"]
+    return verification in VALID_VALUES
+
+def is_valid_external_platform(platform: str) -> bool:
+    VALID_VALUES = ["External", ""]
+    return platform in VALID_VALUES
+
+def is_valid_platform(platform: str) -> bool:
+    VALID_VALUES = ["baremetal", "nutanix", "vsphere", "none", "external"]
+    return platform in VALID_VALUES
