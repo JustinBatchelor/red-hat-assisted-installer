@@ -1,7 +1,298 @@
 import os
 
 from ..utils import *
+"""
+{
+  "additional_ntp_source": {
+    "type": "string",
+    "description": "A comma-separated list of NTP sources (name or IP) going to be added to all the hosts."
+  },
+  "api_vips": [
+    {
+      "description": "The virtual IPs used to reach the OpenShift cluster's API. Enter one IP address for single-stack clusters, or up to two for dual-stack clusters (at most one IP address per IP stack used). The order of stacks should be the same as order of subnets in Cluster Networks, Service Networks, and Machine Networks.",
+      "api_vip": {
+        "description": "The virtual IP used to reach the OpenShift cluster's API.",
+        "cluster_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The cluster that this VIP is associated with."
+        },
+        "ip": {
+          "type": "string",
+          "pattern": "^(?:(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3})|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,}))?$"
+        },
+        "verification": {
+          "type": "string",
+          "default": "unverified",
+          "description": "VIP verification result.",
+          "enum": ["unverified", "failed", "succeeded"]
+        }
+      }
+    }
+  ],
+  "base_dns_domain": {
+    "type": "string",
+    "description": "Base domain of the cluster. All DNS records must be sub-domains of this base and include the cluster name."
+  },
+  "cluster_network_cidr": {
+    "type": "string",
+    "default": "10.128.0.0/14",
+    "pattern": "^(?:(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\/((?:[0-9])|(?:[1-2][0-9])|(?:3[0-2])))|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,})\\/((?:[0-9])|(?:[1-9][0-9])|(?:1[0-1][0-9])|(?:12[0-8])))$",
+    "description": "IP address block from which Pod IPs are allocated. This block must not overlap with existing physical networks. These IP addresses are used for the Pod network, and if you need to access the Pods from an external network, configure load balancers and routers to manage the traffic."
+  },
+  "cluster_network_host_prefix": {
+    "type": "integer",
+    "default": 23,
+    "maximum": 128,
+    "minimum": 1,
+    "description": "The subnet prefix length to assign to each individual node. For example, if clusterNetworkHostPrefix is set to 23, then each node is assigned a /23 subnet out of the given CIDR (clusterNetworkCIDR), which allows for 510 (2^(32 - 23) - 2) pod IP addresses. If you are required to provide access to nodes from an external network, configure load balancers and routers to manage the traffic."
+  },
+  "cluster_networks": [
+    {
+      "x-nullable": true,
+      "description": "Cluster networks that are associated with this cluster.",
+      "cluster_network": {
+        "description": "A network from which Pod IPs are allocated. This block must not overlap with existing physical networks. These IP addresses are used for the Pod network, and if you need to access the Pods from an external network, configure load balancers and routers to manage the traffic.",
+        "cidr": {
+          "type": "string",
+          "pattern": "^(?:(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\/((?:[0-9])|(?:[1-2][0-9])|(?:3[0-2])))|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,})\\/((?:[0-9])|(?:[1-9][0-9])|(?:1[0-1][0-9])|(?:12[0-8])))$"
+        },
+        "cluster_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The cluster that this network is associated with."
+        },
+        "host_prefix": {
+          "type": "integer",
+          "maximum": 128,
+          "minimum": 1,
+          "description": "The subnet prefix length to assign to each individual node. For example, if is set to 23, then each node is assigned a /23 subnet out of the given CIDR, which allows for 510 (2^(32 - 23) - 2) pod IP addresses."
+        }
+      }
+    }
+  ],
+  "cpu_architecture": {
+    "type": "string",
+    "default": "x86_64",
+    "description": "The CPU architecture of the image (x86_64/arm64/etc).",
+    "enum": ["x86_64", "aarch64", "arm64", "ppc64le", "s390x", "multi"]
+  },
+  "disk_encryption": {
+    "type": "object",
+    "properties": {
+      "enable_on": {
+        "type": "string",
+        "default": "none",
+        "description": "Enable/disable disk encryption on master nodes, worker nodes, or all nodes.",
+        "enum": ["none", "all", "masters", "workers"]
+      },
+      "mode": {
+        "type": "string",
+        "default": "tpmv2",
+        "description": "The disk encryption mode to use.",
+        "enum": ["tpmv2", "tang"]
+      },
+      "tang_servers": {
+        "type": "string",
+        "example": "[{\"url\":\"http://tang.example.com:7500\",\"thumbprint\":\"PLjNyRdGw03zlRoGjQYMahSZGu9\"}, {\"url\":\"http://tang.example.com:7501\",\"thumbprint\":\"PLjNyRdGw03zlRoGjQYMahSZGu8\"}]",
+        "description": "JSON-formatted string containing additional information regarding tang's configuration"
+      }
+    }
+  },
+  "high_availability_mode": {
+    "type": "string",
+    "default": "Full",
+    "description": "Guaranteed availability of the installed cluster. 'Full' installs a Highly-Available cluster over multiple master nodes whereas 'None' installs a full cluster over one node.",
+    "enum": ["Full", "None"]
+  },
+  "http_proxy": {
+    "type": "string",
+    "description": "A proxy URL to use for creating HTTP connections outside the cluster. http://<username>:<pswd>@<ip>:<port>"
+  },
+  "https_proxy": {
+    "type": "string",
+    "description": "A proxy URL to use for creating HTTPS connections outside the cluster. http://<username>:<pswd>@<ip>:<port>"
+  },
+  "hyperthreading": {
+    "type": "string",
+    "default": "all",
+    "description": "Enable/disable hyperthreading on master nodes, worker nodes, or all nodes.",
+    "enum": ["masters", "workers", "none", "all"]
+  },
+  "ignition_endpoint": {
+    "type": "object",
+    "properties": {
+      "description": {
+        "type": "string",
+        "description": "Explicit ignition endpoint overrides the default ignition endpoint."
+      },
+      "ca_certificate": {
+        "type": "string",
+        "description": "Base64 encoded CA certificate to be used when contacting the URL via https."
+      },
+      "url": {
+        "type": "string",
+        "description": "The URL for the ignition endpoint."
+      }
+    }
+  },
+  "ingress_vips": [
+    {
+      "description": "The virtual IPs used for cluster ingress traffic. Enter one IP address for single-stack clusters, or up to two for dual-stack clusters (at most one IP address per IP stack used). The order of stacks should be the same as order of subnets in Cluster Networks, Service Networks, and Machine Networks.",
+      "ingress_vip": {
+        "description": "The virtual IP used for cluster ingress traffic.",
+        "cluster_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The cluster that this VIP is associated with."
+        },
+        "ip": {
+          "type": "string",
+          "pattern": "^(?:(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3})|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,}))?$"
+        },
+        "verification": {
+          "type": "string",
+          "default": "unverified",
+          "description": "VIP verification result.",
+          "enum": ["unverified", "failed", "succeeded"]
+        }
+      }
+    }
+  ],
+  "machine_networks": [
+    {
+      "x-nullable": true,
+      "description": "Machine networks that are associated with this cluster.",
+      "machine_network": {
+        "description": "A network that all hosts belonging to the cluster should have an interface with IP address in. The VIPs (if exist) belong to this network.",
+        "cidr": {
+          "type": "string",
+          "pattern": "^(?:(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\/((?:[0-9])|(?:[1-2][0-9])|(?:3[0-2])))|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,})\\/((?:[0-9])|(?:[1-9][0-9])|(?:1[0-1][0-9])|(?:12[0-8])))$"
+        },
+        "cluster_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The cluster that this network is associated with."
+        }
+      }
+    }
+  ],
+  "name": {
+    "type": "string",
+    "maxLength": 54,
+    "minLength": 1,
+    "description": "Name of the OpenShift cluster."
+  },
+  "network_type": {
+    "type": "string",
+    "description": "The desired network type used.",
+    "enum": ["OpenShiftSDN", "OVNKubernetes"]
+  },
+  "no_proxy": {
+    "type": "string",
+    "description": "An \"*\" or a comma-separated list of destination domain names, domains, IP addresses, or other network CIDRs to exclude from proxying."
+  },
+  "ocp_release_image": {
+    "type": "string",
+    "description": "OpenShift release image URI."
+  },
+  "olm_operators": [
+    {
+      "name": {
+        "type": "string",
+        "description": "List of OLM operators to be installed."
+      },
+      "properties": {
+        "type": "string",
+        "description": "Blob of operator-dependent parameters that are required for installation."
+      }
+    }
+  ],
+  "openshift_version": {
+    "type": "string",
+    "description": "Version of the OpenShift cluster."
+  },
+  "platform": {
+    "type": "object",
+    "description": "The configuration for the specific platform upon which to perform the installation.",
+    "properties": {
+      "external": {
+        "type": "object",
+        "description": "Configuration used when installing with an external platform type.",
+        "properties": {
+          "cloud_controller_manager": {
+            "type": "string",
+            "description": "When set to external, this property will enable an external cloud provider.",
+            "enum": ["", "External"]
+          },
+          "platform_name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Holds the arbitrary string representing the infrastructure provider name."
+          }
+        }
+      },
+      "type": {
+        "type": "string",
+        "enum": ["baremetal", "nutanix", "vsphere", "none", "external"],
+        "description": "Type of platform."
+      }
+    }
+  },
+  "pull_secret": {
+    "type": "string",
+    "description": "The pull secret obtained from Red Hat OpenShift Cluster Manager at console.redhat.com/openshift/install/pull-secret."
+  },
+  "schedulable_masters": {
+    "type": "boolean",
+    "default": false,
+    "description": "Schedule workloads on masters"
+  },
+  "service_network_cidr": {
+    "type": "string",
+    "default": "172.30.0.0/16",
+    "pattern": "^(?:(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\/((?:[0-9])|(?:[1-2][0-9])|(?:3[0-2])))|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,})\\/((?:[0-9])|(?:[1-9][0-9])|(?:1[0-1][0-9])|(?:12[0-8])))$",
+    "description": "The IP address pool to use for service IP addresses. You can enter only one IP address pool. If you need to access the services from an external network, configure load balancers and routers to manage the traffic."
+  },
+  "service_networks": [
+    {
+      "x-nullable": true,
+      "description": "Service networks that are associated with this cluster.",
+      "service_network": {
+        "description": "IP address block for service IP blocks.",
+        "cidr": {
+          "type": "string",
+          "pattern": "^(?:(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\/((?:[0-9])|(?:[1-2][0-9])|(?:3[0-2])))|(?:(?:[0-9a-fA-F]*:[0-9a-fA-F]*){2,})\\/((?:[0-9])|(?:[1-9][0-9])|(?:1[0-1][0-9])|(?:12[0-8])))$"
+        },
+        "cluster_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "A network to use for service IP addresses. If you need to access the services from an external network, configure load balancers and routers to manage the traffic."
+        }
+      }
+    }
+  ],
+  "ssh_public_key": {
+    "type": "string",
+    "description": "SSH public key for debugging OpenShift nodes."
+  },
+  "tags": {
+    "type": "string",
+    "description": "A comma-separated list of tags that are associated to the cluster."
+  },
+  "user_managed_networking": {
+    "type": "boolean",
+    "default": false,
+    "description": "(DEPRECATED) Indicate if the networking is managed by the user."
+  },
+  "vip_dhcp_allocation": {
+    "type": "boolean",
+    "default": false,
+    "description": "Indicate if virtual IP DHCP allocation mode is enabled."
+  }
+}
 
+"""
 class ClusterParams:
     def __init__(self, 
                  name: str = None, 

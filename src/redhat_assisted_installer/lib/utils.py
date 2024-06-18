@@ -40,6 +40,10 @@ def is_valid_cidr(cidr):
 
     return True
 
+def is_valid_kernel_value(kernel_value):
+    pattern = r'^(?:(?:[^\s\t\n\r"]+)|(?:"[^"]*"))+$'
+    return bool(re.match(pattern, kernel_value))
+
     
 def is_valid_openshift_version(version):
     """
@@ -103,3 +107,8 @@ def is_valid_hyperthread(hyperthreading):
 def is_valid_network_type(network_type):
     VALID_VALUES = ["OpenShiftSDN", "OVNKubernetes"]
     return network_type in VALID_VALUES
+
+def is_valid_kernel_operation(kernel_operation):
+    VALID_VALUES = ["append", "replace", "delete"]
+    return kernel_operation in VALID_VALUES
+

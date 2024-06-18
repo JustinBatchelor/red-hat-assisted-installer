@@ -3,14 +3,21 @@ import sys, os
 sys.dont_write_bytecode = True
 ###################################################
 
+sys.path.append(os.path.abspath(f"{os.getcwd()}/tests/"))
+
+from utils import *
+
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
 from redhat_assisted_installer import assisted_installer
-from requests.exceptions import HTTPError
 from redhat_assisted_installer.lib.schema.cluster import ClusterParams
-from ..utils import get_input
 
-installer = assisted_installer.assisted_installer()
+import pprint
+
+params = {
+    "name": "pypi-testing"
+    "open"
+}
 
 try:
     params = ClusterParams(
@@ -36,13 +43,13 @@ try:
         vip_dhcp_allocation=get_input("Is VIP DHCP allocation enabled? (True/False): ", lambda x: x.lower() == 'true')
     )
     
-    cluster = installer.post_cluster(params)
-
-except HTTPError as e:
-    print("bad response code")
-    print(e)
+    cluster_response = assisted_installer.post_cluster(params)
+    cluster_response.raise_for_status()
+    print(f"Successfully created cluster:")
+    pprint.pprint(cluster_response.json(), compact=True)
 
 except Exception as e:
+    print(f"Failed to create cluster: {cluster_response.json()}")
     print(e)
 
     

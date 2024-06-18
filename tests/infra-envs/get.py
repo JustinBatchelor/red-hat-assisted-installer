@@ -2,20 +2,20 @@ import sys, os
 ## Code to disable creating pycache dir after running
 sys.dont_write_bytecode = True
 
+sys.path.append(os.path.abspath(f"{os.getcwd()}/tests/"))
+
+from utils import *
+
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
 from redhat_assisted_installer import assisted_installer
-from requests.exceptions import HTTPError
 
-installer = assisted_installer.assisted_installer()
-
+import pprint
 
 try:
-    installer.get_infrastructure_environements()
-
-except HTTPError as e:
-    print("bad response code")
-    print(e)
+    infra = assisted_installer.get_infrastructure_environements()
+    pprint.pprint(infra.json(), compact=True)
+    print(len(infra.json()))
 
 except Exception as e:
     print(e)

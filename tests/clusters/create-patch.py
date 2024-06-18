@@ -3,16 +3,19 @@ import sys, os
 sys.dont_write_bytecode = True
 ###################################################
 
+sys.path.append(os.path.abspath(f"{os.getcwd()}/tests/"))
+
+from utils import *
+
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
 from redhat_assisted_installer import assisted_installer
-from requests.exceptions import HTTPError
 from redhat_assisted_installer.lib.schema.cluster import ClusterParams
 
 sys.path.append(os.path.abspath(f"{os.getcwd()}/tests/"))
 from utils import *
 
-installer = assisted_installer.assisted_installer()
+import pprint
 
 try:
     create_params = ClusterParams(
@@ -36,10 +39,15 @@ try:
         ssh_authorized_key=get_input("Please enter the SSH authorized key: "),
         vip_dhcp_allocation=get_input("Is VIP DHCP allocation enabled? (True/False): ", lambda x: x.lower() == 'true')
     )
-    cluster = installer.post_cluster(cluster=create_params)
+    cluster_response = assisted_installer.post_cluster(cluster=create_params)
+
+    cluster_response.raise_for_status()
+
+    print(f"Successfully created cluster:")
+    pprint.pprint(cluster_response.json(), compact=True)    
 
     patch_parms = ClusterParams(
-        cluster_id=get_input("Please enter the cluster id of the cluster to patch: "),
+        cluster_id=cluster_response.json()['id'],
         name=get_input("Please enter the name of the cluster to patch: "),
         openshift_version=get_input("Please enter the OpenShift version: "),
         pull_secret=get_input("Please enter the pull secret: ") or os.environ.get("REDHAT_PULL_SECRET"),
@@ -60,15 +68,13 @@ try:
         ssh_authorized_key=get_input("Please enter the SSH authorized key: "),
         vip_dhcp_allocation=get_input("Is VIP DHCP allocation enabled? (True/False): ", lambda x: x.lower() == 'true')
     )
+
+    patch_response = assisted_installer.patch_cluster(patch_parms)
+    patch_response.raise_for_status()
+
+    print(f"Successfully patched cluster:")
+    pprint.pprint(patch_response.json(), compact=True)   
     
-    patched_cluster = installer.patch_cluster(cluster=patch_parms)
-
-    clusters = installer.get_clusters()
-    print(len(clusters))
-
-except HTTPError as e:
-    print("bad response code")
-    print(e)
 
 except Exception as e:
     print(e)

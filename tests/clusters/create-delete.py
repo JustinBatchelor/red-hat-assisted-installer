@@ -3,16 +3,19 @@ import sys, os
 sys.dont_write_bytecode = True
 ###################################################
 
+sys.path.append(os.path.abspath(f"{os.getcwd()}/tests/"))
+
+from utils import *
+
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 
 from redhat_assisted_installer import assisted_installer
-from requests.exceptions import HTTPError
 from redhat_assisted_installer.lib.schema.cluster import ClusterParams
 
 sys.path.append(os.path.abspath(f"{os.getcwd()}/tests/"))
-from utils import *
+import pprint
 
-installer = assisted_installer.assisted_installer()
+from utils import *
 
 try:
     params = ClusterParams(
@@ -37,16 +40,17 @@ try:
         vip_dhcp_allocation=get_input("Is VIP DHCP allocation enabled? (True/False): ", lambda x: x.lower() == 'true')
     )
 
-    cluster = installer.post_cluster(params)
-
-    if len(cluster) == 1:
-        installer.delete_cluster(cluster[0]['id'])
-
-    installer.get_clusters()
-
-except HTTPError as e:
-    print("bad response code")
-    print(e)
+    create_api_response = assisted_installer.post_cluster(params)
+    create_api_response.raise_for_status()
+    print(f"Successfully created cluster: {create_api_response.json()['id']}")
+    
+    if assisted_installer.delete_cluster(cluster_id=create_api_response.json()['id']):
+        print(f"Successfully delete cluster: {create_api_response.json()['id']}")
+        clusters = assisted_installer.get_clusters()
+        pprint.pprint(clusters.json(), compact=True)
+        print(len([clusters.json()]))
+    else:
+        print(f"Failed to delete cluster: {create_api_response.json()['id']}")
 
 except Exception as e:
     print(e)

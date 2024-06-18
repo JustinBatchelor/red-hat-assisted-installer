@@ -2,19 +2,214 @@ import os
 
 from ..utils import *
 
+"""
+{
+  "additional_ntp_sources": {
+    "type": "string",
+    "description": "A comma-separated list of NTP sources (name or IP) going to be added to all the hosts."
+  },
+  "additional_trust_bundle": {
+    "type": "string",
+    "maxLength": 65535,
+    "description": "PEM-encoded X.509 certificate bundle. Hosts discovered by this infra-env will trust the certificates in this bundle. Clusters formed from the hosts discovered by this infra-env will also trust the certificates in this bundle."
+  },
+  "cluster_id": {
+    "type": "string",
+    "format": "uuid",
+    "description": "If set, all hosts that register will be associated with the specified cluster."
+  },
+  "cpu_architecture": {
+    "type": "string",
+    "default": "x86_64",
+    "description": "The CPU architecture of the image (x86_64/arm64/etc).",
+    "enum": ["x86_64", "aarch64", "arm64", "ppc64le", "s390x"]
+  },
+  "ignition_config_override": {
+    "type": "string",
+    "description": "JSON formatted string containing the user overrides for the initial ignition config."
+  },
+  "image_type": {
+    "type": "string",
+    "description": "Type of the image.",
+    "enum": ["full-iso", "minimal-iso"]
+  },
+  "kernel_arguments": {
+    "type": "array",
+    "description": "List of kernel argument objects that define the operations and values to be applied.",
+    "items": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Pair of [operation, argument] specifying the argument and what operation should be applied on it."
+        },
+        "operation": {
+          "type": "string",
+          "description": "The operation to apply on the kernel argument.",
+          "enum": ["append", "replace", "delete"]
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^(?:(?:[^ \\t\\n\\r\"]+)|(?:\"[^\"]*\"))+?$",
+          "description": "Kernel argument can have the form or =. The following examples should be supported: rd.net.timeout.carrier=60, isolcpus=1,2,10-20,100-2000:2/25, quiet. The parsing by the command line parser in linux kernel is much looser and this pattern follows it."
+        }
+      }
+    }
+  },
+  "name": {
+    "type": "string",
+    "description": "Name of the infra-env."
+  },
+  "openshift_version": {
+    "type": "string",
+    "description": "Version of the OpenShift cluster (used to infer the RHCOS version - temporary until generic logic implemented)."
+  },
+  "proxy": {
+    "type": "object",
+    "properties": {
+      "http_proxy": {
+        "type": "string",
+        "description": "A proxy URL to use for creating HTTP connections outside the cluster. http://<username>:<pswd>@<ip>:<port>"
+      },
+      "https_proxy": {
+        "type": "string",
+        "description": "A proxy URL to use for creating HTTPS connections outside the cluster. http://<username>:<pswd>@<ip>:<port>"
+      },
+      "no_proxy": {
+        "type": "string",
+        "description": "An \"*\" or a comma-separated list of destination domain names, domains, IP addresses, or other network CIDRs to exclude from proxying."
+      }
+    }
+  },
+  "pull_secret": {
+    "type": "string",
+    "description": "The pull secret obtained from Red Hat OpenShift Cluster Manager at console.redhat.com/openshift/install/pull-secret."
+  },
+  "ssh_authorized_key": {
+    "type": "string",
+    "description": "SSH public key for debugging the installation."
+  },
+  "static_network_config": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "mac_interface_map": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "logical_nic_name": {
+                "type": "string",
+                "description": "NIC name used in the yaml, which relates 1:1 to the MAC address."
+              },
+              "mac_address": {
+                "type": "string",
+                "pattern": "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$",
+                "description": "MAC address present on the host."
+              }
+            }
+          }
+        },
+        "network_yaml": {
+          "type": "string",
+          "description": "YAML string that can be processed by nmstate."
+        }
+      }
+    }
+  }
+}
+"""
+
+
+class Proxy:
+    def __init__(self, 
+                 http_proxy: str = None,
+                 https_proxy: str = None,
+                 no_proxy: str = None,
+                 ) -> None:
+        self.params = {}
+
+        if http_proxy is not None:
+            self.params['http_proxy'] = http_proxy
+        
+        if https_proxy is not None:
+            self.params['https_proxy'] = https_proxy
+
+        if no_proxy is not None:
+            self.params['no_proxy'] = no_proxy
+
+    def create_params(self):
+        return {key: value for key, value in self.params.items() if value is not None}
+        
+class MacInterfaceMap:
+    def __init__(self,
+                 logical_nic_name: str = None,
+                 mac_address: str = None,
+                 ) -> None:
+        
+        self.params = {}
+
+        if logical_nic_name is not None:
+            self.params['logical_nic_name'] = logical_nic_name
+        
+        if mac_address is not None:
+            self.params['mac_address'] = mac_address
+
+    def create_params(self):
+        return [{key: value for key, value in self.params.items() if value is not None}]
+        
+
+class StaticNetworkConfig:
+    def __init__(self, 
+                 mac_interface_map: MacInterfaceMap = None,
+                 network_yaml: str = None,
+                 ) -> None:
+        self.params = {}
+
+        if mac_interface_map is not None:
+            self.params['mac_interface_map'] = mac_interface_map.create_params()
+
+        if network_yaml is not None:
+            self.params['network_yaml'] = network_yaml
+
+    def create_params(self):
+        return [{key: value for key, value in self.params.items() if value is not None}]
+    
+
+class KernelArguments:
+    def __init__(self, 
+                 operation: str = None,
+                 value: str = None,
+                 ) -> None:
+        self.params = {}
+
+        if operation is not None and is_valid_kernel_operation(operation):
+            self.params['operation'] = operation
+
+        if value is not None and is_valid_kernel_value(value):
+            self.params['value'] = value
+
+    def create_params(self):
+        return [{key: value for key, value in self.params.items() if value is not None}]
+    
+
 class InfraEnv:
     def __init__(self,
                  infra_env_id: str = None,
-                 name: str = None,
-                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
                  additional_ntp_source: str = None, 
                  additional_trust_bundle: str = None, 
                  cluster_id: str = None,
                  cpu_architecture: str = None,
-                 ignition_config_override: str = None, 
+                 ignition_config_override: str = None,
                  image_type: str = None,
+                 kernel_arguments: KernelArguments = None,
+                 name: str = None,
                  openshift_version: str = None,
+                 proxy: Proxy = None,
+                 pull_secret: str = os.environ.get("REDHAT_PULL_SECRET"),
                  ssh_authorized_key: str = None,
+                 static_network_config: StaticNetworkConfig = None,
                  ):
         self.params = {}
 
@@ -39,9 +234,6 @@ class InfraEnv:
         if additional_trust_bundle is not None:
             self.params['additional_trust_bundle'] = additional_trust_bundle
 
-        if ignition_config_override is not None:
-            self.params['ignition_config_override'] = ignition_config_override
-
         if image_type is not None and (image_type):
             self.params['image_type'] = image_type
 
@@ -50,6 +242,18 @@ class InfraEnv:
 
         if ssh_authorized_key is not None :
             self.params['ssh_authorized_key'] = ssh_authorized_key
+
+        if kernel_arguments is not None:
+            self.params['kernel_arguments'] = kernel_arguments.create_params()
+
+        if static_network_config is not None:
+            self.params['static_network_config'] = static_network_config.create_params()
+
+        if proxy is not None:
+            self.params['proxy'] = proxy.create_params()
+
+        if ignition_config_override is not None:
+            self.params["ignition_config_override"] = ignition_config_override
 
 
     def create_params(self):
