@@ -162,7 +162,7 @@ def patch_infrastructure_environment(infra_env: InfraEnv) -> Response:
     
     url = API_BASE + f"infra-envs/{infra_env_id}"
 
-    response = requests.patch(url, headers=__get_headers(), json=infra_params)
+    response = requests.patch(url, headers=__get_headers(), data=infra_params, json=infra_params)
  
     return response
 

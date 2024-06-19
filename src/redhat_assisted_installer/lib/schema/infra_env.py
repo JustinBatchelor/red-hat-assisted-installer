@@ -172,7 +172,28 @@ class StaticNetworkConfig(APIObject):
             self.params['mac_interface_map'] = maps
 
         if network_yaml is not None:
-            self.params['network_yaml'] = network_yaml    
+            # Convert the escaped YAML string into a proper YAML string
+            proper_yaml_str = self.convert_escaped_yaml_to_proper_yaml(network_yaml)
+            self.params['network_yaml'] = proper_yaml_str
+
+    def convert_escaped_yaml_to_proper_yaml(escaped_yaml_str: str) -> str:
+        """
+        Converts an escaped YAML string into a properly formatted YAML string.
+
+        Args:
+            escaped_yaml_str (str): The escaped YAML string.
+
+        Returns:
+            str: The properly formatted YAML string.
+        """
+        # Replace escaped newlines with actual newlines and remove unnecessary escape characters
+        proper_yaml_str = escaped_yaml_str.replace('\\n', '\n').replace('\\', '')
+
+        # Load the YAML string to ensure it's valid and then dump it back to a string
+        yaml_data = yaml.safe_load(proper_yaml_str)
+        proper_yaml_str = yaml.dump(yaml_data, default_flow_style=False)
+
+        return proper_yaml_str
 
 class KernelArgument(APIObject):
     def __init__(self, 
