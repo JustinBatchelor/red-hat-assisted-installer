@@ -71,7 +71,7 @@ isolcpus=1,2,10-20,100-2000:2/25
 quiet
 """
 
-kernel_args = [KernelArguments(operation="append",
+kernel_args = [KernelArgument(operation="append",
                               value=val
                               )]
 

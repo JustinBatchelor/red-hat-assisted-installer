@@ -24,7 +24,7 @@ api_vips = [APIVIP(cluster_id=None,
 
 base_dns_domain = "example.com"
 
-cluster_networks = [ClusterNetworks(cidr="10.128.0.0/14",
+cluster_networks = [ClusterNetwork(cidr="10.128.0.0/14",
                                     )]
 
 cpu_acrchitecture = "x86_64"

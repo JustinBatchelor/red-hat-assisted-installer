@@ -172,7 +172,7 @@ class StaticNetworkConfig(APIObject):
         if network_yaml is not None:
             self.params['network_yaml'] = network_yaml    
 
-class KernelArguments(APIObject):
+class KernelArgument(APIObject):
     def __init__(self, 
                  operation: str = None,
                  value: str = None,
@@ -190,13 +190,13 @@ class KernelArguments(APIObject):
 class InfraEnv(APIObject):
     def __init__(self,
                  infra_env_id: str = None,
-                 additional_ntp_source: str = None, 
+                 additional_ntp_sources: str = None, 
                  additional_trust_bundle: str = None, 
                  cluster_id: str = None,
                  cpu_architecture: str = None,
                  ignition_config_override: str = None,
                  image_type: str = None,
-                 kernel_arguments: list[KernelArguments] = None,
+                 kernel_arguments: list[KernelArgument] = None,
                  name: str = None,
                  openshift_version: str = None,
                  proxy: Proxy = None,
@@ -222,8 +222,8 @@ class InfraEnv(APIObject):
         if pull_secret is not None:
             self.params['pull_secret'] = pull_secret
 
-        if additional_ntp_source is not None:
-            self.params['additional_ntp_source'] = additional_ntp_source
+        if additional_ntp_sources is not None:
+            self.params['additional_ntp_sources'] = additional_ntp_sources
 
         if additional_trust_bundle is not None:
             self.params['additional_trust_bundle'] = additional_trust_bundle

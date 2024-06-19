@@ -313,7 +313,7 @@ class APIVIP(APIObject):
         if verification is not None:
             self.params['verification'] = verification
 
-class ClusterNetworks(APIObject):
+class ClusterNetwork(APIObject):
     def __init__(self,
                  cidr: str = None,
                  cluster_id: str = None,
@@ -449,7 +449,7 @@ class Cluster(APIObject):
                  additional_ntp_source: str = None,
                  api_vips: list[APIVIP] = None,
                  base_dns_domain: str = None,
-                 cluster_networks: list[ClusterNetworks] = None,
+                 cluster_networks: list[ClusterNetwork] = None,
                  cpu_architecture: str = None,
                  disk_encryption: DiskEncryption = None,     
                  high_availability_mode: str = None,
