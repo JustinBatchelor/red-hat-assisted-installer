@@ -172,7 +172,7 @@ class StaticNetworkConfig(APIObject):
             self.params['mac_interface_map'] = maps
 
         if network_yaml is not None:
-            self.params['network_yaml'] = yaml.dump(yaml.load(network_yaml))  
+            self.params['network_yaml'] = yaml.dump(yaml.safe_load(network_yaml))  
 
 class KernelArgument(APIObject):
     def __init__(self, 
