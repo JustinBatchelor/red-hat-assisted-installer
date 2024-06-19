@@ -176,6 +176,7 @@ class StaticNetworkConfig(APIObject):
             proper_yaml_str = self.convert_escaped_yaml_to_proper_yaml(network_yaml)
             self.params['network_yaml'] = proper_yaml_str
 
+    @staticmethod
     def convert_escaped_yaml_to_proper_yaml(escaped_yaml_str: str) -> str:
         """
         Converts an escaped YAML string into a properly formatted YAML string.

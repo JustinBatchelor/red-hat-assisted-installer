@@ -9,24 +9,28 @@ from utils import *
 
 sys.path.append(os.path.abspath(f"{os.getcwd()}/src/"))
 from redhat_assisted_installer import assisted_installer
-from redhat_assisted_installer.lib.schema.infra_env import InfraEnv
+from redhat_assisted_installer.lib.schema.infra_env import *
 
 import pprint
 
 
 try:
     infra = InfraEnv(
-        name=get_input("Please enter the name of the infra_env to create: "),
-        openshift_version=get_input("Please enter the OpenShift version: "),
-        pull_secret=get_input("Please enter the pull secret: ") or os.environ.get("REDHAT_PULL_SECRET"),
-        additional_ntp_source=get_input("Please enter additional NTP sources: "),
-        additional_trust_bundle=get_input("Please enter additional trust bundle: "),
-        cpu_architecture=get_input("Please enter the CPU architecture: "),
-        cluster_id=get_input("Please enter the cluster id: "),
-        image_type=get_input("Please enter the image type: "),
-        ssh_authorized_key=get_input("Please enter the SSH authorized key: "),
+        name="networked-infra-env",
+        image_type="minimal-iso",
+        proxy=Proxy(
+            http_proxy="http://proxy.example.com:8080",
+            https_proxy="http://proxy.example.com:8443",
+            no_proxy="localhost,127.0.0.1,.example.com",
+        ),
+        static_network_config=[StaticNetworkConfig(
+            mac_interface_map=[MacInterfaceMap(
+                logical_nic_name="eth0",
+                mac_address="00:1A:2B:3C:4D:5E",
+            )],
+            network_yaml='interfaces:\\n  - name: eth0\\n    type: ethernet\\n    state: up\\n    mac-address: 00:1A:2B:3C:4D:5E\\n    ipv4:\\n      enabled: true\\n      address:\\n        - ip: 192.168.1.100\\n          prefix-length: 24\\n      gateway: 192.168.1.1\\n      dns:\\n        - 8.8.8.8\\n        - 8.8.4.4\\n',
+        )],
     )
-
     create_api_response = assisted_installer.post_infrastructure_environment(infra_env=infra)
     create_api_response.raise_for_status()
     pprint.pprint(create_api_response.json(), compact=True)
@@ -37,7 +41,8 @@ try:
         pprint.pprint(infra_envs.json(), compact=True)
         print(len([infra_envs.json()]))
     else:
+        print(create_api_response.json())
         print(f"Failed to delete infra_env: {create_api_response.json()['id']}")
 
 except Exception as e:
-    print(f"Failed to create infra_env: {create_api_response.json()['id']}")
+    print(f"Failed to create infra_env: {create_api_response.json()}")
